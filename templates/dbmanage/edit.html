@@ -1,0 +1,409 @@
+{% extends 'dbmanage/index.html' %}
+
+{% block config_edit %}
+
+ <section id="content_edit" class="content" >
+        <div id="dialog" >
+        <div class="box">
+            <form class="form-horizontal" action="{% url 'config_save' %}" method="POST">
+                      {% csrf_token %}
+                <div class="box-body">
+                  <span><b>MYSQL</b></span>
+                <div class="form-group">
+                  <label for="mysql" class="col-sm-2 control-label">mysql:</label>
+
+                  <div class="col-sm-10">
+                      <input type="text" value="{{ mysql }}" id="mysql" name="mysql" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="mycnf" class="col-sm-2 control-label">mycnf:</label>
+
+                  <div class="col-sm-10">
+                      <input type="text" value="{{ mycnf }}" id="mycnf" name="mycnf" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group" >
+                  <label for="mysqladmin" class="col-sm-2 control-label">mysqladmin:</label>
+
+                  <div class="col-sm-10" >
+                    <input type="text" value="{{ mysqladmin }}" id="mysqladmin" name="mysqladmin" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="mysql_user" class="col-sm-2 control-label">mysql_user:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ mysql_user }}" id="mysql_user" name="mysql_user" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="mysql_password" class="col-sm-2 control-label">mysql_password:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ mysql_password }}" id="mysql_password" name="mysql_password" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="mysql_socket" class="col-sm-2 control-label">mysql_socket:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ mysql_socket }}" id="mysql_socket" name="mysql_socket" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="mysql_host" class="col-sm-2 control-label">mysql_host:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ mysql_host }}" id="mysql_host" name="mysql_host" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="mysql_port" class="col-sm-2 control-label">mysql_port:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ mysql_port }}" id="mysql_port" name="mysql_port" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="datadir" class="col-sm-2 control-label">datadir:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ datadir }}" id="datadir" name="datadir" style="width:450px;">
+                  </div>
+                </div>
+
+                <hr>
+                  <p><b>Backup</b></p>
+                <div class="form-group">
+                  <label for="pid_dir" class="col-sm-2 control-label">pid_dir:</label>
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ pid_dir }}" id="pid_dir" name="pid_dir" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="tmpdir" class="col-sm-2 control-label">tmpdir:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ tmpdir }}" id="tmpdir" name="tmpdir" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="pid_runtime_warning" class="col-sm-2 control-label">pid_runtime_warning:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ pid_runtime_warning }}" id="pid_runtime_warning" name="pid_runtime_warning" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="backupdir" class="col-sm-2 control-label">backupdir:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ backupdir }}" id="backupdir" name="backupdir" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="backup_tool" class="col-sm-2 control-label">backup_tool:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ backup_tool }}" id="backup_tool" name="backup_tool" style="width:450px;">
+                  </div>
+                    </div>
+                <div class="form-group">
+                  <label for="prepare_tool" class="col-sm-2 control-label">prepare_tool:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ prepare_tool }}" id="prepare_tool" name="prepare_tool" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="xtra_prepare" class="col-sm-2 control-label">xtra_prepare:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xtra_prepare }}" id="xtra_prepare" name="xtra_prepare" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="xtra_backup" class="col-sm-2 control-label">xtra_backup:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xtra_backup }}" id="xtra_backup" name="xtra_backup" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="xtra_prepare_options" class="col-sm-2 control-label">xtra_prepare_options:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xtra_prepare_options }}" id="xtra_prepare_options" name="xtra_prepare_options" style="width:450px;">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="prepare_tool" class="col-sm-2 control-label">xtra_options:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xtra_options }}" id="xtra_options" name="xtra_options" style="width:450px;">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="archive_dir" class="col-sm-2 control-label">archive_dir:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ archive_dir }}" id="archive_dir" name="archive_dir" style="width:450px;">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="full_backup_interval" class="col-sm-2 control-label">full_backup_interval:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ full_backup_interval }}" id="full_backup_interval" name="full_backup_interval" style="width:450px;">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="max_archive_size" class="col-sm-2 control-label">max_archive_size:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ max_archive_size }}" id="max_archive_size" name="max_archive_size" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="max_archive_duration" class="col-sm-2 control-label">max_archive_duration:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ max_archive_duration }}" id="max_archive_duration" name="max_archive_duration" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="partial_list" class="col-sm-2 control-label">partial_list:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ partial_list }}" id="partial_list" name="partial_list" style="width:450px;">
+                  </div>
+                </div>
+                    <hr>
+                  <p><b>Compress</b></p>
+                <div class="form-group">
+                  <label for="compress" class="col-sm-2 control-label">compress:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ compress }}" id="compress" name="compress" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="compress_chunk_size" class="col-sm-2 control-label">compress_chunk_size:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ compress_chunk_size }}" id="compress_chunk_size" name="compress_chunk_size" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="compress_threads" class="col-sm-2 control-label">compress_threads:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ compress_threads }}" id="compress_threads" name="compress_threads" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="decompress" class="col-sm-2 control-label">decompress:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ decompress }}" id="decompress" name="decompress" style="width:450px;">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="remove_original" class="col-sm-2 control-label">remove_original:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" style="width:450px;">
+                  </div>
+                </div>
+                <hr>
+                <p><b>Encrypt</b></p>
+                <div class="form-group">
+                  <label for="xbcrypt" class="col-sm-2 control-label">xbcrypt:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xbcrypt }}" id="xbcrypt" name="xbcrypt" style="width:450px;" readonly>
+
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="encrypt" class="col-sm-2 control-label">encrypt:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ encrypt }}" id="encrypt" name="encrypt" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="encrypt_key" class="col-sm-2 control-label">encrypt_key:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ encrypt_key }}" id="encrypt_key" name="encrypt_key" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="encrypt_key_file" class="col-sm-2 control-label">encrypt_key_file:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ encrypt_key_file }}" id="encrypt_key_file" name="encrypt_key_file" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="encrypt_threads" class="col-sm-2 control-label">encrypt_threads:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ encrypt_threads }}" id="encrypt_threads" name="encrypt_threads" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="encrypt_chunk_size" class="col-sm-2 control-label">encrypt_chunk_size:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ encrypt_chunk_size }}" id="encrypt_chunk_size" name="encrypt_chunk_size" style="width:450px;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="decrypt" class="col-sm-2 control-label">decrypt:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ decrypt }}" id="decrypt" name="decrypt" style="width:450px;">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="remove_original" class="col-sm-2 control-label">remove_original:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ remove_original }}" id="remove_original" name="remove_original" style="width:450px;">
+                  </div>
+                </div>
+                    <hr>
+                <p><b>Xbstream</b></p>
+                <div class="form-group">
+                  <label for="log" class="col-sm-2 control-label">xbstream:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xbstream }}" id="xbstream" name="xbstream" style="width:450px;" placeholder=" Enable this, if you want to stream your backups">
+                  </div>
+                </div>
+
+                    <div class="form-group">
+                  <label for="stream" class="col-sm-2 control-label">stream:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ stream }}" id="stream" name="stream" style="width:450px;" >
+                  </div>
+                </div>
+
+                    <div class="form-group">
+                  <label for="xbstream_options" class="col-sm-2 control-label">xbstream_options:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xbstream_options }}" id="xbstream_options" name="xbstream_options" style="width:450px;" />
+                  </div>
+                </div>
+
+                    <div class="form-group">
+                  <label for="xbs_decrypt" class="col-sm-2 control-label">xbs_decrypt:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ xbs_decrypt }}" id="xbs_decrypt" name="xbs_decrypt" style="width:450px;" >
+                  </div>
+                </div>
+
+
+                     <div class="form-group">
+                  <label for="remote_stream" class="col-sm-2 control-label">remote_stream:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ remote_stream }}" id="remote_stream" name="remote_stream" style="width:450px;" >
+                  </div>
+                </div>
+
+
+
+                <p><b>Remote</b></p>
+                <div class="form-group">
+                  <label for="remote_conn" class="col-sm-2 control-label">remote_conn:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ remote_conn }}" id="remote_conn" name="remote_conn" style="width:450px;" >
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="remote_dir" class="col-sm-2 control-label">remote_dir:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ remote_dir }}" id="remote_dir" name="remote_dir" style="width:450px;" >
+                  </div>
+                </div>
+
+                    <hr>
+                    <p><b>Commands</b></p>
+                <div class="form-group">
+                  <label for="start_mysql_command" class="col-sm-2 control-label">start_mysql_command:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ start_mysql_command }}" id="start_mysql_command" name="start_mysql_command" style="width:450px;" >
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="stop_mysql_command" class="col-sm-2 control-label">stop_mysql_command:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ stop_mysql_command }}" id="stop_mysql_command" name="stop_mysql_command" style="width:450px;" >
+                  </div>
+                </div>
+                    <div class="form-group">
+                  <label for="chown_command" class="col-sm-2 control-label">chown_command:</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" value="{{ chown_command }}" id="chown_command" name="chown_command" style="width:450px;" >
+                  </div>
+                </div>
+
+                </div>>
+
+
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button type="submit" onclick="checkSubmit()" class="btn btn-info pull-left" style="width: 120px"><b>保存(save)</b></button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+
+</div>
+</div>
+
+    </section>
+{% endblock %}

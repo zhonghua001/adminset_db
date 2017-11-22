@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form class = "form-control" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+{#    {{ upload.filename }}#}
+
+    <input type="file" name="filename">
+    <div class="content-wrapper">
+      <textarea id ="text" title="test" class="text-center" name="text_aaaaaaaa"></textarea>
+    </div>
+    <div class="submit-row">
+
+        <button class="button" type="submit" name="upload" >button</button>
+    </div>
+
+     <div class="submit-row">
+
+        <button class="button" type="submit" name="check" >button</button>
+    </div>
+
+</form>
+
+{% if  result  %}
+
+    <span>{{ result }}</span>
+
+{% endif %}
+
+</body>
+</html>

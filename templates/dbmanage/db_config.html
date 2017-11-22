@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block self_head_css_js %}
+    <script src="/static/layer/layer.js" xmlns="http://www.w3.org/1999/html"></script>
+{% endblock %}
+{% block content %}
+<script>
+    window.onload=init;
+    function init() {
+        showhide(7);
+    }
+    function showhide(n) {
+        var box = document.getElementById("config");
+        box.className="active";
+    }
+
+</script>
+
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="seselect2-container">
+        <h3 class="h3">DB Server Backup Configuration</h3>
+        <div class="" style="display: {{ display_control }};">
+
+            <form id="host_selector" method="GET" >
+                {% csrf_token %}
+                <label for="select_group" class="control-label">Group:</label>
+                <select name = "group" id='select_group' class="m-b" onchange="change_info()" title="select_host" style="height: 30px;width: 300px">
+                    <option selected  value="0">Please select group </option>
+
+
+                    {% for g in group_list %}
+                        {% ifequal g.group_name selected_group_name %}
+                            <option value="{{g.group_id}}" selected> {{ g.group_name|slice:":20" }}</option>
+                        {% else %}
+                            <option value="{{g.group_id}}"> {{ g.group_name|slice:":20" }}</option>
+                        {% endifequal %}
+                    {% endfor %}
+                </select>
+                <label for="select_host" class="control-label">Host:</label>
+                <select id="select_host" name ="host" onchange="change_host()" class="m-b input-sm" title="select_host" style="height: 30px;width: 500px">
+                    <option value="0">Please select host</option>
+                    {% for h in host_list %}
+                        {% ifequal h.hostname selected_hostname %}
+                            <option value="{{h.host_id}}" selected> {{ h.hostname|slice:":20" }}___{{ h.host_ip }}</option>
+                        {% else %}
+                            <option value="{{h.host_id}}"> {{ h.hostname|slice:":20" }}___{{ h.host_ip }}</option>
+                        {% endifequal %}
+
+
+                    {% endfor %}
+                </select>
+
+            </form>
+{#            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>#}
+
+            <h4>{{ tips }}</h4>
+
+        </div>
+    </section>
+{% block config_edit %}
+
+    {% endblock %}
+
+        <!-- /.content -->
+</div>
+
+
+
+
+<script>
+function checkSubmit() {
+    if (!confirm("确定修改？")) {
+        window.event.returnValue = false;
+    }
+}
+</script>
+<script>
+function get_token() {
+    $.post('/config/token/',{csrfmiddlewaretoken: '{{ csrf_token }}'},function(data){
+        document.getElementById("token").value = data;
+    });
+}
+</script>
+
+    <script>
+    function change_info(){
+        var args = $("#host_selector").serialize();
+        console.log(args)
+        window.location ='{% url "dbmanage" %}?' + args
+
+    }
+
+     function change_host(){
+        var args = $("#host_selector").serialize();
+        console.log(args)
+        window.location ='{% url "edit_conf" %}?' + args
+
+    }
+    </script>
+
+{% endblock %}

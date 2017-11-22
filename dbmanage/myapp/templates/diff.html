@@ -1,0 +1,171 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>表结构比对</title>
+{% endblock %}
+{% block name %}
+    欢迎使用MySQL数据库<span style="color:red">表结构比对</span>功能
+{% endblock %}
+{%block db_content%}
+    <div id="wrapper">
+        <div id="page-content-wrapper">
+
+            <form role="form" method='post'>
+                {% csrf_token %}
+{#                {% include "include/sidebar.html" %}#}
+                <div class="row">
+                    <div class="col-md-2">
+                        选择比对库和表
+                    </div>
+                    <div class="col-md-2 col-md-offset-4">
+                        选择参照库和表
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+
+                        <select onchange="Change1()" id="dbid1" class="form-control col-md-1" title="选择比对库" name = "choosedb1">
+                            <option value ="">----------</option>
+                            {% for obj in objlist %}
+                                {% if obj == choosed_host1 %}
+                                    <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                                {% else %}
+                                    <option value ="{{ obj }}">{{ obj }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="tbid1" class="form-control col-md-1" title="选择比对表"  name = "choosetb1">
+                            {% if choosed_tb1 %}
+                                <option selected="selected" value ="{{ choosed_tb1 }}">{{ choosed_tb1 }}</option>
+
+                            {% else %}
+                                <option selected="selected" value ="">----------</option>
+                            {% endif %}
+                        </select>
+
+                    </div>
+                    <div class="col-md-3">
+                        <select onchange="Change2()" id="dbid2" class="form-control col-md-1" title="选择参照库" name = "choosedb2">
+                            <option value ="">----------</option>
+                            {% for obj in objlist %}
+                                {% if obj == choosed_host2 %}
+                                    <option selected="selected" value ="{{ obj }}">{{ obj }}</option>
+                                {% else %}
+                                    <option value ="{{ obj }}">{{ obj }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="tbid2" class="form-control col-md-1"  title="选择参照表" name = "choosetb2">
+                            {% if choosed_tb2 %}
+                                <option selected="selected" value ="{{ choosed_tb2 }}">{{ choosed_tb2 }}</option>
+
+                            {% else %}
+                                <option selected="selected" value ="">----------</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-1">
+                        <button type="submit" name='check' class="btn btn-warning" >比对表结构</button>
+
+                    </div>
+                    <div class="col-md-1">
+                        <button onclick="openpage('{% url 'diff' %}')"  class="btn btn-info">刷新</button>
+                    </div>
+                </div>
+
+
+            </form >
+
+            {% if sh_cre1 %}
+
+
+            {% endif %}
+            {% if result %}
+                <hr />
+                <div class="row">
+                    <div class="col-md-6" style="background-color: #dedef8; box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+
+                        {{ sh_cre1.0.1|linebreaks }}
+                    </div>
+                    <div class="col-md-6" style="background-color: #dedef8; box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+                        {{ sh_cre2.0.1|linebreaks }}
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12" style="background-color: #dedef8; box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+
+                        {{ result|linebreaks }}
+                    </div>
+                </div>
+
+            {% endif %}
+
+
+        </div>
+    </div>
+
+
+
+
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    {#    {% include "include/pagejump/tabledata.html" %}#}
+    <script>
+        function Change1() {
+            var dbtag=$("#dbid1").val();
+            $("#tbid1").empty("");
+            $.get("{% url 'get_tblist' %}",{'dbtag':dbtag}).done(function (data) {
+                for (var i =0 ; i <= data.length - 1; i++) {
+                    $("#tbid1").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
+
+                };
+            });
+        }
+        function Change2() {
+            var dbtag=$("#dbid2").val();
+            $("#tbid2").empty("");
+            $.get("{% url 'get_tblist' %}",{'dbtag':dbtag}).done(function (data) {
+                for (var i =0 ; i <= data.length - 1; i++) {
+                    $("#tbid2").append("<option value='" + data[i]  + "'>" + data[i] + "</option>");
+
+                };
+            });
+        }
+
+
+    </script>
+
+{#        <script>#}
+{##}
+{#            $("#menu-toggle").click(function(e) {#}
+{#                e.preventDefault();#}
+{#                $("#wrapper").toggleClass("toggled");#}
+{#            });#}
+{#            function record_cookie() {#}
+{#                var fav = document.getElementById("id_favword");#}
+{#                myfav =escape(fav.value);#}
+{#                myfav = fav.value.replace(/\n/g,"^");#}
+{#                var expires = new Date();#}
+{#                expires.setTime(expires.getTime() + 3500000);#}
+{#                pathstr = ';path=/';#}
+{#                alert(myfav);#}
+{#                document.cookie = "myfavword"+"="+myfav+pathstr+';expires='+expires.toGMTString();#}
+{#            }#}
+{##}
+{#            function showfav() {#}
+{#                var fav = document.getElementById("id_favword");#}
+{#                myfav =unescape(fav.value);#}
+{#                fav.value = myfav;#}
+{#            }#}
+{#        </script>#}
+
+{% endblock %}
+{% endblock %}

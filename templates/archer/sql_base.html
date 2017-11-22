@@ -1,0 +1,132 @@
+﻿{% extends 'base.html' %}
+{% load staticfiles %}
+{% block self_head_css_js %}
+
+    {% load staticfiles %}
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- 引入 Bootstrap -->
+      <link href="{% static 'archer/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+	  <link href="{% static 'archer/user/css/user1.css' %}" rel="stylesheet">
+	  <link href="{% static 'archer/dist/css/bootstrap-select.css' %}" rel="stylesheet">
+      <!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+      <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+      <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <![endif]-->
+
+ {% endblock %}
+{##}
+{##}
+{##}
+
+
+ {% block content %}
+
+    <script>
+        window.onload=init;
+        function init() {
+            showhide(7);
+        }
+        function showhide(n) {
+            var box = document.getElementById("config");
+            box.className="active";
+        }
+
+    </script>
+
+
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+
+            <div class="row clearfix">
+                <div class="col-md-2 column">
+                    <div class="list-group">
+                        {% for menu in leftMenuBtns %}
+                            {% if menu.key == currentMenu %}
+                                <a href="{{menu.url}}" class="list-group-item active"
+                            {% else %}
+                                <a href="{{menu.url}}" class="list-group-item"
+                            {% endif %}
+
+                            {% if menu.key == 'masterconfig' or menu.key == 'userconfig' or menu.key == 'workflowconfig' %}
+                                target="_blank"><span class="{{menu.class}}">&nbsp;{{menu.name}}</span></a>
+                            {% else %}
+                                ><span class="{{menu.class}}">&nbsp;{{menu.name}}</span></a>
+                            {% endif %}
+
+                        {% endfor %}
+{#                            <!-- <a href="#" class="list-group-item"><span class="glyphicon glyphicon glyphicon-cog">&nbsp;审批人权限</span></a>#}
+{#                            <a href="#" class="list-group-item"><span class="glyphicon glyphicon glyphicon glyphicon-file">&nbsp;功能模块6</span></a>#}
+{#                            <a href="#" class="list-group-item"><span class="glyphicon glyphicon glyphicon glyphicon-list-alt">&nbsp;功能模块7</span></a>#}
+{#                            <a href="#" class="list-group-item"><span class="glyphicon glyphicon glyphicon glyphicon-align-right">&nbsp;功能模块8</span></a>-->#}
+                        </div>
+{##}
+                    </div>
+            </div>
+
+
+
+        </section>
+
+        <section class="content">
+            {% block db_content %}
+            {% endblock %}
+          {% block script %}
+
+
+          {% endblock %}
+        </section>
+
+        <!-- /.content -->
+    </div>
+
+{% endblock %}
+
+
+        <!-- 模态框（Modal） -->
+            <div class="modal fade" id="wrongpwd-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                提示
+                            </h4>
+                        </div>
+                        <div class="modal-body" id="wrongpwd-modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">确定
+                            </button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+{##}
+{##}
+{##}
+{##}
+{##}
+{#	<!--中间左侧菜单栏和右侧主要内容区，网格分别为2和10 -->#}
+{##}
+{##}
+{##}
+{#	<!--底部部分 -->#}
+{##}
+	<!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery，务必先引入jquery js再引入bootstrap js) -->
+	<script src="{% static 'archer/jquery/jquery.min.js' %}"></script>
+	<!-- 包括所有已编译的插件 -->
+	<script src="{% static 'archer/bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'archer/dist/js/bootstrap-select.js' %}"></script>
+	<script src="{% static 'archer/user/js/detail.js' %}"></script>
+	<script src="{% static 'archer/user/js/rollback.js' %}"></script>
+	<script src="{% static 'archer/user/js/autoreview.js' %}"></script>
+	<script src="{% static 'archer/user/js/submitsql.js' %}"></script>
+	<script src="{% static 'archer/highcharts/highcharts.js' %}"></script>
+	<script src="{% static 'archer/user/js/charts.js' %}"></script>
+{##}
