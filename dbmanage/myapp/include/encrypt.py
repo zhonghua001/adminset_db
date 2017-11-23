@@ -30,9 +30,9 @@ class prpcrypt():
 
 if __name__ == '__main__':
     pc = prpcrypt()  # 初始化密钥
-    e = pc.encrypt("dFL9406ND2&@9dk#")
+    e = pc.encrypt("FDJ")
     d = pc.decrypt(e)
     print e, d
-    e = pc.encrypt("dFL9406ND2&@9dk#")
+    e = pc.encrypt("eeeeeee")
     d = pc.decrypt(e)
     print e, d

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'dbmanage.blacklist',
     'dbmanage.myapp',
     'dbmanage.archer.sql',
+    'dbmanage.bkrs',
     'django_celery_results',
     'django_celery_beat',
     'django.contrib.admin',
@@ -77,6 +78,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 
 
 

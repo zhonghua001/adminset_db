@@ -17,18 +17,20 @@ leftMenuBtnsDoc = (
 
 def global_info(request):
     """存放用户，会话信息等."""
-    loginUser = request.user.username
-    a = UserInfo.objects.get(username=loginUser)
-    if loginUser is not None:
-        user = sqlreview_role.objects.get(userid_id=a.id)
-        if user.userid.is_superuser:
-            leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsSuper + leftMenuBtnsDoc
+    if request.user.username:
+        loginUser = request.user.username
+        a = UserInfo.objects.get(username=loginUser)
+        if loginUser is not None:
+            user = sqlreview_role.objects.get(userid_id=a.id)
+            if user.userid.is_superuser:
+                leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsSuper + leftMenuBtnsDoc
+            else:
+                leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsDoc
         else:
-            leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsDoc
-    else:
-        leftMenuBtns = ()
+            leftMenuBtns = ()
 
-    return {
-        'loginUser':loginUser,
-        'leftMenuBtns':leftMenuBtns,
-    }
+        return {
+            'loginUser':loginUser,
+            'leftMenuBtns':leftMenuBtns,
+        }
+    return {}

@@ -436,7 +436,8 @@ def inception(request):
                                                           'upform':upform,
                                                           'objlist':objlist,
                                                           'temp_name':temp_name})
-        elif request.POST.has_key('upload'):
+        elif request.POST.has_key('upload') and request.FILES.has_key('filename'):
+
             upform = Uploadform(request.POST,request.FILES)
             #c = request.POST['cx']
             if upform.is_valid():
