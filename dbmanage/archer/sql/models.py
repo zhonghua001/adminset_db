@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .aes_decryptor import Prpcrypt
 from accounts.models import UserInfo
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 #角色分两种：

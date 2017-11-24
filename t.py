@@ -4,9 +4,9 @@ def main():
     conf = {
         'user':'root',
         'password':'123456',
-        'host':'192.168.0.13',
-        'port':6669,
-        'db':'d',
+        'host':'192.168.134.130',
+        'port':3307,
+        'db':'mysql',
         'charset':'utf8'
     }
 
@@ -19,20 +19,20 @@ def main():
         try:
             conn = pymysql.connect(**conf)
             cur = conn.cursor()
-            id = i[p]
-            num = p + 1
-            name = 'test'+str(num)
-            sql = "insert into test VALUES ({0},{1},'{2}')".format(id,num,name)
-            print(sql)
 
-            cur.execute(sql,id,num)
-            cur.execute('select *from test where id between 1 and 10')
-            data = cur.fetchall()
-            print(data)
-            p = p+1
+            sql = "select *from mysql.user"
+
+
+            cur.execute(sql)
+            col = [c[0] for c in cur.description]
+            result = [dict(zip(col,row)) for row in cur.fetchall()]
+
+
             cur.close()
             conn.commit()
             conn.close()
+            print result
+
             continue
         except IndexError:
             cur.close()
@@ -41,7 +41,4 @@ def main():
             break
 
 if __name__ == '__main__':
-    username = "''or 1 = 1 –-"
-    password = ''
-    sql = 'select *from mysql.user where user={} and passwd = {}'.format(username,password)
-    print(sql)
+    main()

@@ -59,7 +59,7 @@
                          {{ upform.filename }}
                      </div>
                     <div class="col-md-2">
-                        <button type="submit" name='upload' class="btn btn-warning">脚本上传</button >
+                        <button id='send_file' type="submit" name='upload' class="btn btn-warning">脚本上传</button >
 
                     </div>
 
@@ -157,5 +157,46 @@
 
 {% endblock %}
 {% block script %}
+
+    <script>
+        var send=document.getElementById("send_file");
+        send.onclick=function(){ var file=document.getElementById("id_filename").value;
+        if(file.length<1){ alert('请选择'); return false; } }
+
+    </script>
+
+
     {% include "include/pagejump/pagejump.html" %}
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -63,10 +63,13 @@ class UserInfo(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         if self.is_active and self.is_superuser:
             return True
+        # return _user_has_perm(self, perm, obj)
 
 
     def has_module_perms(self, app_label):
         return True
+
+        # return _user_ha/s_module_perms(self, app_label/)
 
     def get_full_name(self):
         # The user is identified by their email address
