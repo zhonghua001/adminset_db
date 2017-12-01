@@ -8,6 +8,7 @@ import email
 from email import encoders
 from email.header import Header
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from email.utils import parseaddr, formataddr
 import smtplib
 
@@ -32,9 +33,10 @@ class MailSender(object):
         return formataddr((Header(name, 'utf-8').encode(), addr))
 
     def _send(self, strTitle, strContent, listToAddr):
-        msg = MIMEText(strContent, 'plain', 'utf-8')
+        msg = MIMEMultipart()
+        txt = MIMEText(strContent, 'plain', 'utf-8')
         # 收件人地址:
-
+        msg.attach(txt)
         msg['From'] = self._format_addr(self.MAIL_REVIEW_FROM_ADDR)
         #msg['To'] = self._format_addr(listToAddr)
         msg['To'] = ','.join(listToAddr)
@@ -47,6 +49,7 @@ class MailSender(object):
         if self.MAIL_REVIEW_FROM_PASSWORD != '':
             server.login(self.MAIL_REVIEW_FROM_ADDR, self.MAIL_REVIEW_FROM_PASSWORD)
         sendResult = server.sendmail(self.MAIL_REVIEW_FROM_ADDR, listToAddr, msg.as_string())
+        print sendResult
         server.quit()
 
     #调用方应该调用此方法，采用子进程方式异步阻塞地发送邮件，避免邮件服务挂掉影响archer主服务

@@ -30,7 +30,7 @@ class UserManager(models.Manager):
 
 class User(models.Model):
     username = models.CharField(max_length=50)
-    passworp = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
     regdate = models.DateTimeField(auto_now_add=timezone.now())
 
     objects = UserManager()
@@ -44,6 +44,20 @@ class User(models.Model):
     @property
     def full_name(self):
         return '{} {}'.format(self.username,self.regdate)
+
+    @property
+    def role_name(self):
+
+        roles = []
+        for i in self.group_set.all():
+            for r in i.role_set.all():
+                roles.append(r.role_name)
+                print r.role_name
+
+        return ','.join(list(set(roles)))
+
+
+
 class Group(models.Model):
 
     group_name = models.CharField(max_length=50)
