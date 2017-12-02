@@ -97,7 +97,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'adminset.urls'
-
+# LOGIN_URL = '/accout/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

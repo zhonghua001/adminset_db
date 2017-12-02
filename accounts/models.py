@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from dbmanage.archer.sql.models import sqlreview_role
 # Create your models here.
 
 
@@ -55,10 +56,15 @@ class UserInfo(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     nickname = models.CharField(max_length=64, null=True)
     role = models.ForeignKey(RoleList, null=True, blank=True)
+    # sql_review_role = models.ForeignKey(sqlreview_role,null=True)
 
+    def sql_review_role(self):
+        return self.sqlreview_role_role
     objects = UserManager()
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+
+
 
     def has_perm(self, perm, obj=None):
         if self.is_active and self.is_superuser:

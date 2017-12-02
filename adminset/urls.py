@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls')),
     url(r'^appconf/', include('appconf.urls')),
     url(r'^dbmanage/',include('dbmanage.urls')),
-    url(r'^test/',views.test,name='test'),
-
+    # url(r'^test/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$',views.test,name='test'),
+    url(r'^test/$',views.test,name='test'),
 ]

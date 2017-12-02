@@ -21,8 +21,8 @@ def global_info(request):
         loginUser = request.user.username
         a = UserInfo.objects.get(username=loginUser)
         if loginUser is not None:
-            user = sqlreview_role.objects.get(userid_id=a.id)
-            if user.userid.is_superuser:
+            # user = sqlreview_role.objects.get(userid_id=a.id)
+            if a.is_superuser:
                 leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsSuper + leftMenuBtnsDoc
             else:
                 leftMenuBtns = leftMenuBtnsCommon + leftMenuBtnsDoc

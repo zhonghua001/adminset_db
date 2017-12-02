@@ -2,7 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .aes_decryptor import Prpcrypt
-from accounts.models import UserInfo
+
+from django.conf import settings
 from django.contrib.auth.models import User
 # Create your models here.
 
@@ -11,7 +12,7 @@ from django.contrib.auth.models import User
 #2.审核人：可以审核并执行SQL上线单的管理者、高级工程师、系统管理员们。
 class sqlreview_role(models.Model):
     display = models.CharField('显示的中文名', max_length=50)
-    userid = models.OneToOneField(UserInfo)
+    userid = models.OneToOneField(settings.AUTH_USER_MODEL)
     role = models.CharField('角色', max_length=20, choices=(('工程师','工程师'),('审核人','审核人')), default='工程师')
 
     def __str__(self):
