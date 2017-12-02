@@ -1,5 +1,5 @@
 {% extends "archer/sql_base.html" %}
-
+{% load static %}
 {% block db_content %}
         <script>
         var sidebar_database = document.getElementById('database_menu');
@@ -10,7 +10,7 @@
 <div class="container-fluid">
 	<div class="row clearfix">
 
-	<form id="form-submitsql" action="/autoreview/" method="post" class="form-horizontal" role="form">
+	<form id="form-submitsql" action="/dbmanage/archer/autoreview/" method="post" class="form-horizontal" role="form">
 		{% csrf_token %}
         <input type="hidden" id="workflowid" name="workflowid"/>
 		<div class="col-md-8 column">
@@ -22,7 +22,7 @@
 					<input id="workflow_name" type="text" name="workflow_name" class="form-control" data-name="上线单名称" placeholder="请输入上线单名称，如:XX项目会员功能建表" required>
 				</div>
 				<div class="form-group">
-					<select id="cluster_name" name="cluster_name" class="selectpicker show-tick form-control bs-select-hidden" data-name="要上线的集群" data-placeholder="请选择要上线的集群:" required>
+					<select id="cluster_name" name="cluster_name" class="form-control select2 select2-hidden-accessible" data-name="要上线的集群" data-placeholder="请选择要上线的集群:" required>
           				<option value="is-empty" disabled="" selected="selected">请选择要上线的集群:</option>
 						{% for cluster_name,dbs in dictAllClusterDb.items %}
 							<option value="{{cluster_name}}">{{cluster_name}}集群 (包含db：
@@ -36,14 +36,14 @@
 					</select>					
 				</div>
 				<div class="form-group">
-					<select id="is_backup" name="is_backup" class="selectpicker show-tick form-control bs-select-hidden" data-name="是否选择备份" data-placeholder="请选择是否要备份:" required>
+					<select id="is_backup" name="is_backup" class="form-control select2 select2-hidden-accessible" data-name="是否选择备份" data-placeholder="请选择是否要备份:" required>
           				<option value="is-empty" disabled="" selected="selected">请选择是否要备份:</option>
           				<option value="是">是</option>
           				<option value="否">否</option>
         			</select>	
 				</div>
 				<div class="form-group">
-					<select id="review_man" name="review_man" class="selectpicker show-tick form-control bs-select-hidden" data-name="审核人" data-placeholder="请选择RD审核人:" required>
+					<select id="review_man" name="review_man" class="form-control select2 select2-hidden-accessible" data-name="审核人" data-placeholder="请选择RD审核人:" required>
           			<option value="is-empty" disabled="" selected="selected">请选择审核人:</option>
 					{% for man in reviewMen %}
 					<option value="{{man}}">{{man}}</option>
@@ -99,4 +99,10 @@
 		</div>
 	</div>
 </div>
+ 	<script src="{% static 'archer/user/js/detail.js' %}"></script>
+	<script src="{% static 'archer/user/js/rollback.js' %}"></script>
+	<script src="{% static 'archer/user/js/autoreview.js' %}"></script>
+	<script src="{% static 'archer/user/js/submitsql.js' %}"></script>
+	<script src="{% static 'archer/highcharts/highcharts.js' %}"></script>
+	<script src="{% static 'archer/user/js/charts.js' %}"></script>
 {% endblock db_content %}

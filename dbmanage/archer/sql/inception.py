@@ -7,7 +7,8 @@ from django.conf import settings
 
 from .models import master_config, workflow
 from .aes_decryptor import Prpcrypt
-
+from dbmanage.myapp.models import Db_name
+from dbmanage.myapp.include.encrypt import prpcrypt
 class InceptionDao(object):
     def __init__(self):
         try:
@@ -65,13 +66,18 @@ class InceptionDao(object):
         '''
         将sql交给inception进行自动审核，并返回审核结果。
         '''
-        listMasters = master_config.objects.filter(cluster_name=clusterName)
-        if len(listMasters) != 1:
+        try:
+            master_up = Db_name.objects.get(dbtag=clusterName).db_account_set.get(role='admin')
+            master_ip = Db_name.objects.get(dbtag=clusterName).instance.get()
+
+            # master_config.objects.filter(cluster_name=clusterName)
+        except:
             print("Error: 主库配置返回为0")
-        masterHost = listMasters[0].master_host
-        masterPort = listMasters[0].master_port
-        masterUser = listMasters[0].master_user
-        masterPassword = self.prpCryptor.decrypt(listMasters[0].master_password)
+        masterHost = master_ip.ip
+        masterPort = master_ip.port
+        masterUser = master_up.user
+        p = prpcrypt()
+        masterPassword = p.decrypt(master_up.passwd)
 
         #这里无需判断字符串是否以；结尾，直接抛给inception enable check即可。
         #if sqlContent[-1] != ";":

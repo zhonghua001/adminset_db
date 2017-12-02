@@ -27,7 +27,7 @@ function autoreview() {
 	//将数据通过ajax提交给后端进行检查
 	$.ajax({
 		type: "post",
-		url: "/simplecheck/",
+		url: "/dbmanage/archer/simplecheck/",
 		dataType: "json",
 		data: {
 			sql_content: sqlContent.val(),

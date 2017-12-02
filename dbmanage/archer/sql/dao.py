@@ -14,7 +14,7 @@ class Dao(object):
         cursor = None
         
         try:
-            conn=MySQLdb.connect(host=masterHost, port=masterPort, user=masterUser, passwd=masterPassword, charset='utf8mb4')
+            conn=MySQLdb.connect(host=masterHost, port=int(masterPort), user=masterUser, passwd=masterPassword, charset='utf8mb4')
             cursor = conn.cursor()
             sql = "show databases"
             n = cursor.execute(sql)

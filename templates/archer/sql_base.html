@@ -1,5 +1,6 @@
 ﻿{% extends 'base.html' %}
 {% load staticfiles %}
+{% load static %}
 {% block self_head_css_js %}
 
     {% load staticfiles %}
@@ -23,6 +24,13 @@
 
 
  {% block content %}
+
+	<script src="{% static 'archer/user/js/detail.js' %}"></script>
+	<script src="{% static 'archer/user/js/rollback.js' %}"></script>
+	<script src="{% static 'archer/user/js/autoreview.js' %}"></script>
+	<script src="{% static 'archer/user/js/submitsql.js' %}"></script>
+	<script src="{% static 'archer/highcharts/highcharts.js' %}"></script>
+	<script src="{% static 'archer/user/js/charts.js' %}"></script>
 
     <script>
         window.onload=init;

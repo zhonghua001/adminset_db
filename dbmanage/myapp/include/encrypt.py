@@ -32,7 +32,7 @@ if __name__ == '__main__':
     pc = prpcrypt()  # 初始化密钥
     e = pc.encrypt("FDJ")
     d = pc.decrypt(e)
-    print e, d
-    e = pc.encrypt("eeeeeee")
-    d = pc.decrypt(e)
+    # print e, d
+    e = pc.encrypt("123456")
+    d = pc.decrypt('538ac203ccb2cdfc621f5f832f609380')
     print e, d

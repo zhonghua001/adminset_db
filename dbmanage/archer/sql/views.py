@@ -6,7 +6,7 @@ import time
 import multiprocessing
 from collections import OrderedDict
 from accounts.models import UserInfo
-
+from dbmanage.myapp.include.encrypt import prpcrypt
 from django.db.models import Q
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -19,14 +19,16 @@ from .dao import Dao
 from .const import Const
 from .sendmail import MailSender
 from .inception import InceptionDao
-from .aes_decryptor import Prpcrypt
+# from .aes_decryptor import Prpcrypt
 from .models import sqlreview_role, master_config, workflow
 from django.template.loader import get_template
 from django.template import Context
 dao = Dao()
 inceptionDao = InceptionDao()
 mailSender = MailSender()
-prpCryptor = Prpcrypt()
+prpCryptor = prpcrypt()
+from dbmanage.myapp.include import function as func
+from dbmanage.myapp.models import Db_name
 
 # def login(request):
 #     return render(request, 'login.html')
@@ -42,7 +44,7 @@ prpCryptor = Prpcrypt()
 def allworkflow(request):
 
 
-    temp_name = 'dbmanage/dbmanage_header.html'
+    temp_name = 'archer/archer-header.html'
     #一个页面展示
     PAGE_LIMIT = 12
 
@@ -118,7 +120,7 @@ def allworkflow(request):
         t = get_template('archer/tbody-result.html')
         content_html = t.render(context)
         payload = {'content_html':content_html,
-                      'success': True}
+                   'success': True}
         return HttpResponse(json.dumps(payload))
     return render(request, 'archer/allWorkflow.html', context)
 
@@ -135,43 +137,53 @@ def allworkflow(request):
 
 #提交SQL的页面
 def submitSql(request):
-    masters = master_config.objects.all().order_by('cluster_name')
+    temp_name = 'archer/archer-header.html'
+    # masters = master_config.objects.all().order_by('cluster_name')
+
+    masters = func.get_mysql_hostlist(request.user.username,'incept')
+
+
     if len(masters) == 0:
-       context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
+       context = {'errMsg': '集群数为0，可能后端数据没有配置集群','temp_name':temp_name}
        return render(request, 'archer/error.html', context)
     
     #获取所有集群名称
-    listAllClusterName = [master.cluster_name for master in masters]
-
+    # listAllClusterName = masters
+    pydecryp = prpcrypt()
     dictAllClusterDb = OrderedDict()
     #每一个都首先获取主库地址在哪里
-    for clusterName in listAllClusterName:
-        listMasters = master_config.objects.filter(cluster_name=clusterName)
-        if len(listMasters) != 1:
-            context = {'errMsg': '存在两个集群名称一样的集群，请修改数据库'}
-            return render(request, 'error.html', context)
+    for master in masters:
+    #     listMasters = master_config.objects.filter(cluster_name=clusterName)
+    #     if len(listMasters) != 1:
+    #         context = {'errMsg': '存在两个集群名称一样的集群，请修改数据库'}
+    #         return render(request, 'error.html', context)
         #取出该集群的名称以及连接方式，为了后面连进去获取所有databases
-        masterHost = listMasters[0].master_host
-        masterPort = listMasters[0].master_port
-        masterUser = listMasters[0].master_user
-        masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+        master_up = Db_name.objects.get(dbtag=master).db_account_set.get(role='admin')
+        master_ip = Db_name.objects.get(dbtag=master).instance.get()
+        masterHost = master_ip.ip
+        masterPort = master_ip.port
+        masterUser = master_up.user
+        masterPassword = prpCryptor.decrypt(master_up.passwd)
 
         listDb = dao.getAlldbByCluster(masterHost, masterPort, masterUser, masterPassword)
-        dictAllClusterDb[clusterName] = listDb
+        dictAllClusterDb[master] = listDb
 
     #获取所有审核人，当前登2录用户不可以审核
-    loginUser = request.session.get('login_username', False)
-    reviewMen = sqlreview_role.objects.filter(role='审核人').exclude(username=loginUser)
+    loginUser = request.user.username
+    reviewMen = sqlreview_role.objects.filter(role='审核人').exclude(userid__username=loginUser)
     if len(reviewMen) == 0:
-       context = {'errMsg': '审核人为0，请配置审核人'}
-       return render(request, 'error.html', context) 
-    listAllReviewMen = [user.username for user in reviewMen]
+       context = {'errMsg': '审核人为0，请配置审核人','temp_name':temp_name}
+       return render(request, 'archer/error.html', context)
+    # listAllReviewMen = [user.username for user in reviewMen]
+    for key,db in dictAllClusterDb.items():
+        print key,db
   
-    context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen}
-    return render(request, 'submitSql.html', context)
+    context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen,'temp_name':temp_name}
+    return render(request, 'archer/submitSql.html', context)
 
 #提交SQL给inception进行解析
 def autoreview(request):
+    temp_name = 'archer/archer-header.html'
     workflowid = request.POST.get('workflowid')
     sqlContent = request.POST['sql_content']
     workflowName = request.POST['workflow_name']
@@ -184,17 +196,17 @@ def autoreview(request):
     #服务器端参数验证
     if sqlContent is None or workflowName is None or clusterName is None or isBackup is None or reviewMan is None:
         context = {'errMsg': '页面提交参数可能为空'}
-        return render(request, 'error.html', context)
+        return render(request, 'archer/error.html', context)
     sqlContent = sqlContent.rstrip()
     if sqlContent[-1] != ";":
         context = {'errMsg': "SQL语句结尾没有以;结尾，请后退重新修改并提交！"}
-        return render(request, 'error.html', context)
+        return render(request, 'archer/error.html', context)
  
     #交给inception进行自动审核
     result = inceptionDao.sqlautoReview(sqlContent, clusterName)
     if result is None or len(result) == 0:
         context = {'errMsg': 'inception返回的结果集为空！可能是SQL语句有语法错误'}
-        return render(request, 'error.html', context)
+        return render(request, 'archer/error.html', context)
     #要把result转成JSON存进数据库里，方便SQL单子详细信息展示
     jsonResult = json.dumps(result)
 
@@ -267,7 +279,7 @@ def detail(request, workflowId):
         Content[4] = Content[4].split('\n')     # 审核/执行结果
         Content[5] = Content[5].split('\r\n')   # sql语句
     context = {'currentMenu':'allworkflow', 'workflowDetail':workflowDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen}
-    return render(request, 'detail.html', context)
+    return render(request, 'archer/detail.html', context)
 
 #人工审核也通过，执行SQL
 def execute(request):
@@ -288,12 +300,12 @@ def execute(request):
     loginUser = request.session.get('login_username', False)
     if loginUser is None or loginUser not in listAllReviewMen:
         context = {'errMsg': '当前登录用户不是审核人，请重新登录.'}
-        return render(request, 'error.html', context)
+        return render(request, 'archer/error.html', context)
 
     #服务器端二次验证，当前工单状态必须为等待人工审核
     if workflowDetail.status != Const.workflowStatus['manreviewing']:
         context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！'}
-        return render(request, 'error.html', context)
+        return render(request, 'archer/error.html', context)
 
     dictConn = getMasterConnStr(clusterName)
 
@@ -364,7 +376,7 @@ def cancel(request):
 
     #服务器端二次验证，如果当前单子状态是结束状态，则不能发起终止
     if workflowDetail.status in (Const.workflowStatus['abort'], Const.workflowStatus['finish'], Const.workflowStatus['autoreviewwrong'], Const.workflowStatus['exception']):
-        return HttpResponseRedirect('/detail/' + str(workflowId) + '/')
+        return HttpResponseRedirect('/dbmanage/archer/detail/' + str(workflowId) + '/')
 
     workflowDetail.status = Const.workflowStatus['abort']
     workflowDetail.save()
@@ -394,7 +406,7 @@ def cancel(request):
             #不发邮件
             pass
 
-    return HttpResponseRedirect('/detail/' + str(workflowId) + '/')
+    return HttpResponseRedirect('/dbmanage/archer/detail/' + str(workflowId) + '/')
 
 #展示回滚的SQL
 def rollback(request):
@@ -417,7 +429,7 @@ def rollback(request):
         sub_review_man = ''
 
     context = {'listBackupSql':listBackupSql, 'rollbackWorkflowName':rollbackWorkflowName, 'cluster_name':cluster_name, 'review_man':review_man, 'sub_review_man':sub_review_man}
-    return render(request, 'rollback.html', context)
+    return render(request, 'archer/rollback.html', context)
 
 #SQL审核必读
 def dbaprinciples(request):
@@ -427,7 +439,7 @@ def dbaprinciples(request):
 #图表展示
 def charts(request):
     context = {'currentMenu':'charts'}
-    return render(request, 'charts.html', context)
+    return render(request, 'archer/charts.html', context)
 
 #根据集群名获取主库连接字符串，并封装成一个dict
 def getMasterConnStr(clusterName):
