@@ -76,6 +76,8 @@ class Host(models.Model):
 
     def __unicode__(self):
         return self.hostname
+    class META:
+        ordering = ['group','ip','hostname']
 
 
 class IpSource(models.Model):

@@ -1,7 +1,12 @@
-{% extends "base.html" %}
+{% extends "archer/sql_base.html" %}
 
-{% block content %}
-
+{% block db_content %}
+    <script>
+        var sidebar_database = document.getElementById('database_menu');
+        var archer_bar = document.getElementById('sql_review');
+        $(sidebar_database).addClass('active');
+        $(archer_bar).addClass('active');
+    </script>
 <div class="container-fluid">
 <div class="row clearfix">
 	<div class="col-md-12 column">
@@ -17,5 +22,5 @@
 </div>
 </div>
 </script>
-{% endblock content %}
+{% endblock db_content %}
 

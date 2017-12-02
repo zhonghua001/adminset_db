@@ -14,6 +14,10 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls')),
     url(r'^appconf/', include('appconf.urls')),
     url(r'^dbmanage/',include('dbmanage.urls')),
-    # url(r'^test/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$',views.test,name='test'),
     url(r'^test/$',views.test,name='test'),
+    url(r'^add/$',views.add,name='add'),
+    url(r'^ajax_dict',views.ajax_dict,name='ajax_dict'),
+    url(r'^ajax_list',views.ajax_list,name='ajax_list'),
+    url(r'^forbidden/',views.forbidden,name='forbidden'),
+
 ]

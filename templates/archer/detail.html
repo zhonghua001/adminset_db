@@ -1,6 +1,12 @@
-{% extends "base.html" %}
+{% extends "archer/sql_base.html" %}
 
-{% block content %}
+{% block db_content %}
+        <script>
+        var sidebar_database = document.getElementById('database_menu');
+        var archer_bar = document.getElementById('sql_review');
+        $(sidebar_database).addClass('active');
+        $(archer_bar).addClass('active');
+    </script>
 			<h4>单子名称：<span id="editWorkflowNname">{{workflowDetail.workflow_name}}</span></h4>
             <input type="hidden" id="workflowDetail_id" name="workflowid" value="{{workflowDetail.id}}">
             <input type="hidden" id="editSqlContent" value="{{workflowDetail.sql_content}}"/>
@@ -181,4 +187,4 @@
                 	<a type='button' id="btnEditSql" class='btn btn-warning' href="/editsql/">重新修改</a>
 				{% endif %}
 			{% endif %}
-{% endblock content%}
+{% endblock db_content%}

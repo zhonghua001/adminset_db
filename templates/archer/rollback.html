@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "archer/sql_base.html" %}
 
-{% block content %}
+{% block db_content %}
 			<div>
 				<div style="width: 20%; float: left"><h4>回滚SQL语句：</h4></div>
 				<div style="width: 80%; float: right">
@@ -26,4 +26,4 @@
 					{% endfor %}
 				</tbody>
 			</table>
-{% endblock content%}
+{% endblock db_content%}

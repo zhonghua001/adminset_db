@@ -21,7 +21,8 @@ from .sendmail import MailSender
 from .inception import InceptionDao
 from .aes_decryptor import Prpcrypt
 from .models import sqlreview_role, master_config, workflow
-
+from django.template.loader import get_template
+from django.template import Context
 dao = Dao()
 inceptionDao = InceptionDao()
 mailSender = MailSender()
@@ -39,6 +40,8 @@ prpCryptor = Prpcrypt()
 @login_required(login_url='/account/login/')
 @permission_verify()
 def allworkflow(request):
+
+
     temp_name = 'dbmanage/dbmanage_header.html'
     #一个页面展示
     PAGE_LIMIT = 12
@@ -49,12 +52,13 @@ def allworkflow(request):
 
     #参数检查
     if 'pageNo' in request.GET:
-        pageNo = request.GET['pageNo']
+        pageNo = request.GET['pageNo'].encode('utf8')
     else:
         pageNo = '0'
-    
+
     if 'navStatus' in request.GET:
-        navStatus = request.GET['navStatus']
+        navStatus = request.GET['navStatus'].encode('utf8')
+
     else:
         navStatus = 'all'
     if not isinstance(pageNo, str) or not isinstance(navStatus, str):
@@ -110,14 +114,31 @@ def allworkflow(request):
 
 
     context = {'currentMenu':'allworkflow', 'listWorkflow':listWorkflow, 'pageNo':pageNo, 'navStatus':navStatus, 'PAGE_LIMIT':PAGE_LIMIT, 'role':role,'temp_name':temp_name}
+    if request.is_ajax():
+        t = get_template('archer/tbody-result.html')
+        content_html = t.render(context)
+        payload = {'content_html':content_html,
+                      'success': True}
+        return HttpResponse(json.dumps(payload))
     return render(request, 'archer/allWorkflow.html', context)
+
+
+
+
+
+
+
+
+
+
+
 
 #提交SQL的页面
 def submitSql(request):
     masters = master_config.objects.all().order_by('cluster_name')
     if len(masters) == 0:
        context = {'errMsg': '集群数为0，可能后端数据没有配置集群'}
-       return render(request, 'error.html', context) 
+       return render(request, 'archer/error.html', context)
     
     #获取所有集群名称
     listAllClusterName = [master.cluster_name for master in masters]

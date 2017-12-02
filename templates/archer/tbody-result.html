@@ -1,0 +1,32 @@
+{% for workflow in listWorkflow %}
+<tr>
+    <td>
+        {{workflow.id}}
+    </td>
+    <td>
+        <a href="/detail/{{workflow.id}}/">{{workflow.workflow_name}}</a>
+    </td>
+    <td>
+        {{workflow.engineer}}
+    </td>
+    <td>
+        {{workflow.status}}
+    </td>
+    <td>
+        {{workflow.create_time|date:"Y-m-d H:i:s"}}
+    </td>
+    <td>
+        {{workflow.cluster_name}}
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td>当前状态暂无工单，嘿嘿嘿.</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+
+
+{% endfor %}

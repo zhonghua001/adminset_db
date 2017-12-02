@@ -1,6 +1,12 @@
-{% extends "base.html" %}
+{% extends "archer/sql_base.html" %}
 
-{% block content %}
+{% block db_content %}
+        <script>
+        var sidebar_database = document.getElementById('database_menu');
+        var archer_bar = document.getElementById('sql_review');
+        $(sidebar_database).addClass('active');
+        $(archer_bar).addClass('active');
+    </script>
 <h4>请认真阅读SQL审核规则：</h4>
 https://github.com/jly8866/archer/raw/master/docs/mysql_db_design_guide.docx
-{% endblock content %}
+{% endblock db_content %}

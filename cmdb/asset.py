@@ -49,7 +49,7 @@ def asset(request):
         if idc:
             asset_find = Host.objects.filter(idc=idc)
     else:
-        asset_find = Host.objects.all()
+        asset_find = Host.objects.all().order_by('group','ip','hostname')
     if idc_name:
         asset_find = asset_find.filter(idc__name__contains=idc_name)
     if group_name:

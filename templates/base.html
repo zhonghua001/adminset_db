@@ -22,7 +22,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
     </script>
 </head>
-<body class="hold-transition skin-yellow-light sidebar-mini">
+<body class="hold-transition sidebar-mini sidebar-mini skin-purple" style="height: auto; min-height: 100%;">
+{# <body class="sidebar-mini wysihtml5-supported skin-blue" style="height: auto; min-height: 100%;">#}
 <div class="loading"></div>
 <div class="wrapper">
 
@@ -38,6 +39,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script type="text/javascript">
     $('.loading').animate({'width':'25%'},50);  //第一个进度节点
 </script>
+
   <!-- Content Wrapper. Contains page content -->
     {% block content %}{% endblock %}
   <!-- /.content-wrapper -->

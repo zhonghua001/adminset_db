@@ -2,17 +2,17 @@
 from accounts.models import UserInfo
 from .models import sqlreview_role
 leftMenuBtnsCommon = (
-                   {'key':'allworkflow',        'name':'查看历史工单',     'url':'/allworkflow/',              'class':'glyphicon glyphicon-home'},
-                   {'key':'submitsql',          'name':'发起SQL上线',       'url':'/submitsql/',               'class':'glyphicon glyphicon-asterisk'},
+                   {'key':'allworkflow',        'name':'查看历史工单',     'url':'/dbmanage/archer/allworkflow/',              'class':'glyphicon glyphicon-home'},
+                   {'key':'submitsql',          'name':'发起SQL上线',       'url':'/dbmanage/archer/submitsql/',               'class':'glyphicon glyphicon-asterisk'},
                )
 leftMenuBtnsSuper = (
-                   {'key':'masterconfig',       'name':'主库地址配置',      'url':'/admin/sql/master_config/',      'class':'glyphicon glyphicon-user'},
-                   {'key':'userconfig',         'name':'用户权限配置',       'url':'/admin/sql/users/',        'class':'glyphicon glyphicon-th-large'},
-                   {'key':'workflowconfig',     'name':'所有工单管理',       'url':'/admin/sql/workflow/',        'class':'glyphicon glyphicon-list-alt'},
+                   {'key':'masterconfig',       'name':'主库地址配置',      'url':'/dbmanage/archer/admin/sql/master_config/',      'class':'glyphicon glyphicon-user'},
+                   {'key':'userconfig',         'name':'用户权限配置',       'url':'/dbmanage/archer/admin/sql/users/',        'class':'glyphicon glyphicon-th-large'},
+                   {'key':'workflowconfig',     'name':'所有工单管理',       'url':'/dbmanage/archer/admin/sql/workflow/',        'class':'glyphicon glyphicon-list-alt'},
 )
 leftMenuBtnsDoc = (
-                   {'key':'dbaprinciples',     'name':'SQL审核必读',       'url':'/dbaprinciples/',        'class':'glyphicon glyphicon-book'},
-                   {'key':'charts',     'name':'统计图表展示',       'url':'/charts/',        'class':'glyphicon glyphicon-file'},
+                   {'key':'dbaprinciples',     'name':'SQL审核必读',       'url':'/dbmanage/archer/dbaprinciples/',        'class':'glyphicon glyphicon-book'},
+                   {'key':'charts',     'name':'统计图表展示',       'url':'/dbmanage/archer/charts/',        'class':'glyphicon glyphicon-file'},
 )
 
 def global_info(request):
@@ -32,5 +32,6 @@ def global_info(request):
         return {
             'loginUser':loginUser,
             'leftMenuBtns':leftMenuBtns,
+
         }
     return {}
