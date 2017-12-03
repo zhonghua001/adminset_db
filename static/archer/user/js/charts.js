@@ -61,7 +61,7 @@ $(document).ready(function() {
 function getMonthWork() {
 	$.ajax({
 		type: 'get',
-    	url: '/getMonthCharts/',
+    	url: '/dbmanage/archer/getMonthCharts/',
     	success: function(data) {
       		var series = monthChart.series[0],
         	shift = series.data.length > 1000; // 当数据点数量超过 20 个，则指定删除第一个点
@@ -89,7 +89,7 @@ function getMonthWork() {
 function getPersonWork() {
 	$.ajax({
 		type: 'get',
-    	url: '/getPersonCharts/',
+    	url: '/dbmanage/archer/getPersonCharts/',
     	success: function(data) {
       		var series = personChart.series[0],
         	shift = series.data.length > 1000; // 当数据点数量超过 20 个，则指定删除第一个点

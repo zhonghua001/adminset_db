@@ -55,7 +55,7 @@ function get_pct(wid, sqlNum){
         $.ajax({
             type: "post",
             async: false,
-            url: "/getOscPercent/",
+            url: "/dbmanage/archer/getOscPercent/",
             dataType: "json",
             data: {
                 workflowid: wid,
@@ -140,7 +140,7 @@ function stopOsc(wid, sqlNum){
         $.ajax({
             type: "post",
             async: false,
-            url: "/stopOscProgress/",
+            url: "/dbmanage/archer/stopOscProgress/",
             dataType: "json",
             data: {
                 workflowid: wid,
@@ -169,7 +169,7 @@ function getWorkflowStatus(wid){
         $.ajax({
             type: "post",
             async: false,
-            url: "/getWorkflowStatus/",
+            url: "/dbmanage/archer/getWorkflowStatus/",
             dataType: "json",
             data: {
                 workflowid: wid

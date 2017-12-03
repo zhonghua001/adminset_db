@@ -127,14 +127,9 @@ def allworkflow(request):
 
 
 
-
-
-
-
-
-
-
-
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 #提交SQL的页面
 def submitSql(request):
     temp_name = 'archer/archer-header.html'
@@ -182,6 +177,9 @@ def submitSql(request):
     return render(request, 'archer/submitSql.html', context)
 
 #提交SQL给inception进行解析
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def autoreview(request):
     temp_name = 'archer/archer-header.html'
     workflowid = request.POST.get('workflowid')
@@ -222,7 +220,7 @@ def autoreview(request):
             break
 
     #存进数据库里
-    engineer = request.session.get('login_username', False)
+    engineer = request.user.username
     if not workflowid:
         Workflow = workflow()
         Workflow.create_time = getNow()
@@ -260,10 +258,14 @@ def autoreview(request):
                 #不发邮件
                 pass
     
-    return HttpResponseRedirect('/detail/' + str(workflowId) + '/') 
+    return HttpResponseRedirect('/dbmanage/archer/detail/' + str(workflowId) + '/')
 
 #展示SQL工单详细内容，以及可以人工审核，审核通过即可执行
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def detail(request, workflowId):
+    temp_name = 'archer/archer-header.html'
     workflowDetail = get_object_or_404(workflow, pk=workflowId)
     if workflowDetail.status in (Const.workflowStatus['finish'], Const.workflowStatus['exception']):
         listContent = json.loads(workflowDetail.execute_result)
@@ -278,14 +280,18 @@ def detail(request, workflowId):
     for Content in listContent:
         Content[4] = Content[4].split('\n')     # 审核/执行结果
         Content[5] = Content[5].split('\r\n')   # sql语句
-    context = {'currentMenu':'allworkflow', 'workflowDetail':workflowDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen}
+    context = {'currentMenu':'allworkflow', 'workflowDetail':workflowDetail, 'listContent':listContent,'listAllReviewMen':listAllReviewMen,'temp_name':temp_name}
     return render(request, 'archer/detail.html', context)
 
 #人工审核也通过，执行SQL
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def execute(request):
+    temp_name = 'archer/archer-header.html'
     workflowId = request.POST['workflowid']
     if workflowId == '' or workflowId is None:
-        context = {'errMsg': 'workflowId参数为空.'}
+        context = {'errMsg': 'workflowId参数为空.','temp_name':temp_name}
         return render(request, 'error.html', context)
     
     workflowId = int(workflowId)
@@ -299,12 +305,12 @@ def execute(request):
     #服务器端二次验证，正在执行人工审核动作的当前登录用户必须为审核人. 避免攻击或被接口测试工具强行绕过
     loginUser = request.session.get('login_username', False)
     if loginUser is None or loginUser not in listAllReviewMen:
-        context = {'errMsg': '当前登录用户不是审核人，请重新登录.'}
+        context = {'errMsg': '当前登录用户不是审核人，请重新登录.','temp_name':temp_name}
         return render(request, 'archer/error.html', context)
 
     #服务器端二次验证，当前工单状态必须为等待人工审核
     if workflowDetail.status != Const.workflowStatus['manreviewing']:
-        context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！'}
+        context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！','temp_name':temp_name}
         return render(request, 'archer/error.html', context)
 
     dictConn = getMasterConnStr(clusterName)
@@ -351,13 +357,17 @@ def execute(request):
             #不发邮件
             pass
 
-    return HttpResponseRedirect('/detail/' + str(workflowId) + '/') 
+    return HttpResponseRedirect('/dbmanage/archer/detail/' + str(workflowId) + '/')
 
 #终止流程
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def cancel(request):
+    temp_name = 'archer/archer-header.html'
     workflowId = request.POST['workflowid']
     if workflowId == '' or workflowId is None:
-        context = {'errMsg': 'workflowId参数为空.'}
+        context = {'errMsg': 'workflowId参数为空.','temp_name':temp_name}
         return render(request, 'error.html', context)
 
     workflowId = int(workflowId)
@@ -371,7 +381,7 @@ def cancel(request):
     #服务器端二次验证，如果正在执行终止动作的当前登录用户，不是发起人也不是审核人，则异常.
     loginUser = request.session.get('login_username', False)
     if loginUser is None or (loginUser not in listAllReviewMen and loginUser != workflowDetail.engineer):
-        context = {'errMsg': '当前登录用户不是审核人也不是发起人，请重新登录.'}
+        context = {'errMsg': '当前登录用户不是审核人也不是发起人，请重新登录.','temp_name':temp_name}
         return render(request, 'error.html', context)
 
     #服务器端二次验证，如果当前单子状态是结束状态，则不能发起终止
@@ -409,10 +419,14 @@ def cancel(request):
     return HttpResponseRedirect('/dbmanage/archer/detail/' + str(workflowId) + '/')
 
 #展示回滚的SQL
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def rollback(request):
+    temp_name = 'archer/archer-header.html'
     workflowId = request.GET['workflowid']
     if workflowId == '' or workflowId is None:
-        context = {'errMsg': 'workflowId参数为空.'}
+        context = {'errMsg': 'workflowId参数为空.','temp_name':temp_name}
         return render(request, 'error.html', context)
     workflowId = int(workflowId)
     listBackupSql = inceptionDao.getRollbackSqlList(workflowId)
@@ -432,16 +446,25 @@ def rollback(request):
     return render(request, 'archer/rollback.html', context)
 
 #SQL审核必读
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def dbaprinciples(request):
     context = {'currentMenu':'dbaprinciples'}
     return render(request, 'dbaprinciples.html', context)
 
 #图表展示
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def charts(request):
     context = {'currentMenu':'charts'}
     return render(request, 'archer/charts.html', context)
 
 #根据集群名获取主库连接字符串，并封装成一个dict
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def getMasterConnStr(clusterName):
     listMasters = master_config.objects.filter(cluster_name=clusterName)
     
@@ -457,6 +480,9 @@ def getNow():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 #获取当前请求url
+@login_required(login_url='/accounts/login/')
+# @permission_required('myapp.can_see_taskview', login_url='/')
+@permission_verify()
 def _getDetailUrl(request):
     scheme = request.scheme
     host = request.META['HTTP_HOST']

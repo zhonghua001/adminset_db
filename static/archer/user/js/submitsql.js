@@ -34,7 +34,7 @@ $("#review_man").change(function review_man(){
 
 $(document).ready(function () {
 	var pathname = window.location.pathname;
-	if (pathname == "/editsql/") {
+	if (pathname == "/dbmanage/archer/editsql/") {
 		document.getElementById('workflowid').value = sessionStorage.getItem('editWorkflowDetailId');
 		document.getElementById('workflow_name').value = sessionStorage.getItem('editWorkflowNname');
 		document.getElementById('sql_content').value = sessionStorage.getItem('editSqlContent');
