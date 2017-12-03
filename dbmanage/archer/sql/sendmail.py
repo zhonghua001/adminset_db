@@ -56,3 +56,9 @@ class MailSender(object):
     def sendEmail(self, strTitle, strContent, listToAddr):
         p = Process(target=self._send, args=(strTitle, strContent, listToAddr))
         p.start()
+
+
+if __name__ == '__main__':
+
+    m = MailSender()
+    m.sendEmail('321','32132132','ljd821208@163.com')

@@ -88,6 +88,12 @@
 						<th width="40px">
 							ID
 						</th>
+                        <th width="110px">
+                            步骤
+                        </th>
+                        <th width="80px">
+                            错误级别
+                        </th>
 						<th>
 							SQL内容
 						</th>
@@ -107,13 +113,28 @@
 				</thead>
 				<tbody>
 					{% for row in listContent %}
-					<tr>
+					<tr class="{% if row.2 == 0  %}
+                              bg-green color-palette
+                          {% elif row.2 == 1 %}
+                             bg-yellow color-palette
+                          {% else %}
+                            bg-red color-palette
+                         {% endif %}">
 						<td>
 						{% if forloop.last %}
 							<input type="hidden" id="sqlMaxRowNumber" value="{{forloop.counter}}">
 						{% endif %}
 							{{forloop.counter}}
 						</td>
+
+                      <td>
+                         {{ row.1 }}
+
+                      </td>
+                     <td>
+                         {{ row.2 }}
+
+                      </td>
 					   <td style='word-wrap:break-word;'>
 	 						{% for sql in row.5 %}
  								{{ sql }}{% if not forloop.last %}<br/>{% endif %}
@@ -163,36 +184,36 @@
 			</table>
 			{% if workflowDetail.status == '等待审核人审核' %}
             {% if loginUser in listAllReviewMen %}
-			<form action="/execute/" method="post" style="display:inline-block;">
+			<form action="/dbmanage/archer/execute/" method="post" style="display:inline-block;">
 				{% csrf_token %}
 				<input type="hidden" name="workflowid" value="{{workflowDetail.id}}">
 				<input type="submit" id="btnExecute" type="button" onclick="execute()" class="btn btn-primary btn-default" data-loading-text="Loading..." value="审核通过，执行" />
 			</form>
 			{% endif %}
 
-			<form action="/cancel/" method="post" style="display:inline-block;">
+			<form action="/dbmanage/archer/cancel/" method="post" style="display:inline-block;">
 				{% csrf_token %}
 				<input type="hidden" name="workflowid" value="{{workflowDetail.id}}">
-				<input type="submit" id="btnCancel" type="button" onclick="execute()" class="btn btn-default" data-loading-text="Loading..." value="终止流程" />
-                <input type="submit" id="reback"  onclick="execute()" class="btn btn-default" data-loading-text="Loading..." value="返回" />
+				<input type="submit" id="btnCancel"  onclick="execute()" class="btn btn-default" data-loading-text="Loading..." value="终止流程" />
+                <input type="button" id="reback"  onclick="execute()" class="btn btn-default" data-loading-text="Loading..." value="返回" />
 
 			</form>
 			{% elif workflowDetail.status == '已正常结束' and workflowDetail.is_backup == '是' %}
-			<form action="/rollback/" method="get" style="display:inline-block;">
+			<form action="/dbmanage/archer/rollback/" method="get" style="display:inline-block;">
                 {% csrf_token %}
                 <input type="hidden" name="workflowid" value="{{workflowDetail.id}}">
                 <input type="submit" id="btnRollback" type="button" class="btn btn-default" data-loading-text="Loading..." value="查看回滚SQL" />
             </form>
-                <form action="/index/" method="get" style="display:inline-block;">
+                <form action="/dbmanage/archer/index/" method="get" style="display:inline-block;">
                 {% csrf_token %}
 
-                <input type="submit" id="btnRollback"  class="btn btn-default" data-loading-text="Loading..." value="查看回滚SQL" />
+                <input type="submit" id="btnRollback"  class="btn btn-default" data-loading-text="Loading..." value="返回" />
             </form>
 			{% elif workflowDetail.status == '自动审核不通过' or workflowDetail.status == '人工终止流程' or workflowDetail.status == '执行有异常' %}
 				{% if workflowDetail.engineer == loginUser %}
 				<!--只允许发起人修改工单-->
 					{% csrf_token %}
-                	<a type='button' id="btnEditSql" class='btn btn-warning' href="/editsql/">重新修改</a>
+                	<a type='button' id="btnEditSql" class='btn btn-warning' href="/dbmanage/archer/editsql/">重新修改</a>
 				{% endif %}
 			{% endif %}
 {% endblock db_content%}

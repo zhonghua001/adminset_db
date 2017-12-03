@@ -2,8 +2,6 @@
 {% load static %}
 {% block db_content %}
 
-
-
         <script>
         var sidebar_database = document.getElementById('database_menu');
         var archer_bar = document.getElementById('sql_review');
@@ -25,19 +23,25 @@
 					<input id="workflow_name" type="text" name="workflow_name" class="form-control" data-name="上线单名称" placeholder="请输入上线单名称，如:XX项目会员功能建表" required>
 				</div>
 				<div class="form-group">
-					<select id="cluster_name" name="cluster_name" class="form-control select2 select2-hidden-accessible" data-name="要上线的集群" data-placeholder="请选择要上线的集群:" required>
+					<select id="cluster_name" onchange="change_cluster()" name="cluster_name" class="form-control select2 select2-hidden-accessible" data-name="要上线的集群" data-placeholder="请选择要上线的集群:" required>
           				<option value="is-empty" disabled="" selected="selected">请选择要上线的集群:</option>
 						{% for cluster_name,dbs in dictAllClusterDb.items %}
-							<option value="{{cluster_name}}">{{cluster_name}}集群 (包含db：
-							{% for db in dbs %}
-								{{db}}{% if not forloop.last %},{% endif%}
-							{% endfor %}
-							)
+							<option value="{{cluster_name}}">{{cluster_name}}集群
 							</option>
                         {% endfor %}
 						        		
-					</select>					
+					</select>
+
+
 				</div>
+                <div class="form-group">
+                                  <label>数据库列表{{ a.a }}</label>
+                                  <select id="id_dbs" multiple="" class="form-control" disabled="">
+
+
+                                  </select>
+                                </div>
+
 				<div class="form-group">
 					<select id="is_backup" name="is_backup" class="form-control select2 select2-hidden-accessible" data-name="是否选择备份" data-placeholder="请选择是否要备份:" required>
           				<option value="is-empty" disabled="" selected="selected">请选择是否要备份:</option>
@@ -101,7 +105,20 @@
 		
 		</div>
 	</div>
+
 </div>
+    <script>
+    function change_cluster(){
+
+        var cluster = $("#cluster_name option:selected").val();
+        var db = {{ listDB|safe }};
+        console.log(db[cluster]);
+        for ( i in db[cluster]) {
+             $("#id_dbs").append('<option value="'+db[cluster][i]+'">'+db[cluster][i]+'</option>');
+        }
+    }
+
+</script>
  	<script src="{% static 'archer/user/js/detail.js' %}"></script>
 	<script src="{% static 'archer/user/js/rollback.js' %}"></script>
 	<script src="{% static 'archer/user/js/autoreview.js' %}"></script>

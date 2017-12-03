@@ -19,7 +19,6 @@ from .dao import Dao
 from .const import Const
 from .sendmail import MailSender
 from .inception import InceptionDao
-# from .aes_decryptor import Prpcrypt
 from .models import sqlreview_role, master_config, workflow
 from django.template.loader import get_template
 from django.template import Context
@@ -39,7 +38,7 @@ from dbmanage.myapp.models import Db_name
 #     return render(request, 'login.html')
 
 #首页，也是查看所有SQL工单页面，具备翻页功能
-@login_required(login_url='/account/login/')
+@login_required(login_url='/accounts/login/')
 @permission_verify()
 def allworkflow(request):
 
@@ -170,10 +169,10 @@ def submitSql(request):
        context = {'errMsg': '审核人为0，请配置审核人','temp_name':temp_name}
        return render(request, 'archer/error.html', context)
     # listAllReviewMen = [user.username for user in reviewMen]
-    for key,db in dictAllClusterDb.items():
-        print key,db
+
+
   
-    context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen,'temp_name':temp_name}
+    context = {'currentMenu':'submitsql', 'dictAllClusterDb':dictAllClusterDb, 'reviewMen':reviewMen,'temp_name':temp_name,'listDB':json.dumps(dictAllClusterDb)}
     return render(request, 'archer/submitSql.html', context)
 
 #提交SQL给inception进行解析
@@ -247,12 +246,12 @@ def autoreview(request):
 
                 #发一封邮件
                 strTitle = "新的SQL上线工单提醒 # " + str(workflowId)
-                objEngineer = sqlreview_role.objects.get(username=engineer)
+                objEngineer = sqlreview_role.objects.get(userid__username=engineer)
                 for reviewMan in listAllReviewMen:
                     if reviewMan == "":
                         continue
                     strContent = "发起人：" + engineer + "\n审核人：" + reviewMan  + "\n工单地址：" + url + "\n工单名称： " + workflowName + "\n具体SQL：" + sqlContent
-                    objReviewMan = sqlreview_role.objects.get(username=reviewMan)
+                    objReviewMan = sqlreview_role.objects.get(userid__username=reviewMan).userid
                     mailSender.sendEmail(strTitle, strContent, [objReviewMan.email])
             else:
                 #不发邮件
@@ -303,7 +302,7 @@ def execute(request):
         listAllReviewMen = (workflowDetail.review_man, )
 
     #服务器端二次验证，正在执行人工审核动作的当前登录用户必须为审核人. 避免攻击或被接口测试工具强行绕过
-    loginUser = request.session.get('login_username', False)
+    loginUser = request.user.username
     if loginUser is None or loginUser not in listAllReviewMen:
         context = {'errMsg': '当前登录用户不是审核人，请重新登录.','temp_name':temp_name}
         return render(request, 'archer/error.html', context)
@@ -343,7 +342,7 @@ def execute(request):
             reviewMen = workflowDetail.review_man
             workflowStatus = workflowDetail.status
             workflowName = workflowDetail.workflow_name
-            objEngineer = sqlreview_role.objects.get(username=engineer)
+            objEngineer = sqlreview_role.objects.get(userid__username=engineer).userid
             strTitle = "SQL上线工单执行完毕 # " + str(workflowId)
             strContent = "发起人：" + engineer + "\n审核人：" + reviewMen + "\n工单地址：" + url + "\n工单名称： " + workflowName +"\n执行结果：" + workflowStatus
             mailSender.sendEmail(strTitle, strContent, [objEngineer.email])
@@ -351,7 +350,7 @@ def execute(request):
             for reviewMan in listAllReviewMen:
                 if reviewMan == "":
                     continue
-                objReviewMan = sqlreview_role.objects.get(username=reviewMan)
+                objReviewMan = sqlreview_role.objects.get(userid__username=reviewMan).userid
                 mailSender.sendEmail(strTitle, strContent, [objReviewMan.email])
         else:
             #不发邮件
@@ -379,7 +378,7 @@ def cancel(request):
         listAllReviewMen = (reviewMan, )
 
     #服务器端二次验证，如果正在执行终止动作的当前登录用户，不是发起人也不是审核人，则异常.
-    loginUser = request.session.get('login_username', False)
+    loginUser = request.user.username
     if loginUser is None or (loginUser not in listAllReviewMen and loginUser != workflowDetail.engineer):
         context = {'errMsg': '当前登录用户不是审核人也不是发起人，请重新登录.','temp_name':temp_name}
         return render(request, 'error.html', context)
@@ -442,7 +441,7 @@ def rollback(request):
         review_man = workflowDetail.review_man
         sub_review_man = ''
 
-    context = {'listBackupSql':listBackupSql, 'rollbackWorkflowName':rollbackWorkflowName, 'cluster_name':cluster_name, 'review_man':review_man, 'sub_review_man':sub_review_man}
+    context = {'listBackupSql':listBackupSql, 'rollbackWorkflowName':rollbackWorkflowName, 'cluster_name':cluster_name, 'review_man':review_man, 'sub_review_man':sub_review_man,'temp_name':temp_name}
     return render(request, 'archer/rollback.html', context)
 
 #SQL审核必读
@@ -458,20 +457,22 @@ def dbaprinciples(request):
 # @permission_required('myapp.can_see_taskview', login_url='/')
 @permission_verify()
 def charts(request):
-    context = {'currentMenu':'charts'}
+    temp_name = 'archer/archer-header.html'
+    context = {'currentMenu':'charts','temp_name':temp_name}
     return render(request, 'archer/charts.html', context)
 
 #根据集群名获取主库连接字符串，并封装成一个dict
-@login_required(login_url='/accounts/login/')
-# @permission_required('myapp.can_see_taskview', login_url='/')
-@permission_verify()
+# @login_required(login_url='/accounts/login/')
+# # @permission_required('myapp.can_see_taskview', login_url='/')
+# @permission_verify()
 def getMasterConnStr(clusterName):
-    listMasters = master_config.objects.filter(cluster_name=clusterName)
-    
-    masterHost = listMasters[0].master_host
-    masterPort = listMasters[0].master_port
-    masterUser = listMasters[0].master_user
-    masterPassword = prpCryptor.decrypt(listMasters[0].master_password)
+    master_up = Db_name.objects.get(dbtag=clusterName).db_account_set.get(role='admin')
+    master_ip = Db_name.objects.get(dbtag=clusterName).instance.get()
+    masterHost = master_ip.ip
+    masterPort = master_ip.port
+    masterUser = master_up.user
+    masterPassword = prpCryptor.decrypt(master_up.passwd)
+
     dictConn = {'masterHost':masterHost, 'masterPort':masterPort, 'masterUser':masterUser, 'masterPassword':masterPassword}
     return dictConn
 
@@ -480,9 +481,9 @@ def getNow():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 #获取当前请求url
-@login_required(login_url='/accounts/login/')
-# @permission_required('myapp.can_see_taskview', login_url='/')
-@permission_verify()
+# @login_required(login_url='/accounts/login/')
+# # @permission_required('myapp.can_see_taskview', login_url='/')
+# @permission_verify()
 def _getDetailUrl(request):
     scheme = request.scheme
     host = request.META['HTTP_HOST']
