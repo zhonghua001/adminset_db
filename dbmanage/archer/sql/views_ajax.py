@@ -17,7 +17,7 @@ from .dao import Dao
 from .const import Const
 from .inception import InceptionDao
 from .aes_decryptor import Prpcrypt
-from .models import sqlreview_role, master_config, workflow
+from .models import sqlreview_role, main_config, workflow
 
 dao = Dao()
 inceptionDao = InceptionDao()

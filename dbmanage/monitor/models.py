@@ -20,21 +20,21 @@ class Mysql_processlist(models.Model):
 class Mysql_replication(models.Model):
     db_ip = models.CharField(max_length=20)
     db_port = models.SmallIntegerField()
-    is_master = models.SmallIntegerField(default=0)
-    is_slave = models.SmallIntegerField(default=0)
+    is_main = models.SmallIntegerField(default=0)
+    is_subordinate = models.SmallIntegerField(default=0)
     read_only = models.CharField(max_length=10,null=True)
     gtid_mode = models.CharField(max_length=10,null=True)
-    master_server = models.CharField(max_length=30,null=True)
-    master_port = models.CharField(max_length=20,null=True)
-    slave_io_run = models.CharField(max_length=20,null=True)
-    slave_sql_run = models.CharField(max_length=20,null=True)
+    main_server = models.CharField(max_length=30,null=True)
+    main_port = models.CharField(max_length=20,null=True)
+    subordinate_io_run = models.CharField(max_length=20,null=True)
+    subordinate_sql_run = models.CharField(max_length=20,null=True)
     delay = models.CharField(max_length=20,null=True)
     current_binlog_file = models.CharField(max_length=30,null=True)
     current_binlog_pos = models.CharField(max_length=30,null=True)
-    master_binlog_file = models.CharField(max_length=30,null=True)
-    master_binlog_pos = models.CharField(max_length=30,null=True)
-    master_binlog_space = models.BigIntegerField(default=0)
-    slave_sql_running_state = models.CharField(max_length=100,null=True)
+    main_binlog_file = models.CharField(max_length=30,null=True)
+    main_binlog_pos = models.CharField(max_length=30,null=True)
+    main_binlog_space = models.BigIntegerField(default=0)
+    subordinate_sql_running_state = models.CharField(max_length=100,null=True)
     create_time = models.DateTimeField()
     class Meta:
         db_table = 'mysql_replication'
@@ -43,21 +43,21 @@ class Mysql_replication(models.Model):
 class Mysql_replication_his(models.Model):
     db_ip = models.CharField(max_length=20)
     db_port = models.SmallIntegerField()
-    is_master = models.SmallIntegerField(default=0)
-    is_slave = models.SmallIntegerField(default=0)
+    is_main = models.SmallIntegerField(default=0)
+    is_subordinate = models.SmallIntegerField(default=0)
     read_only = models.CharField(max_length=10,null=True)
     gtid_mode = models.CharField(max_length=10,null=True)
-    master_server = models.CharField(max_length=30,null=True)
-    master_port = models.CharField(max_length=20,null=True)
-    slave_io_run = models.CharField(max_length=20,null=True)
-    slave_sql_run = models.CharField(max_length=20,null=True)
+    main_server = models.CharField(max_length=30,null=True)
+    main_port = models.CharField(max_length=20,null=True)
+    subordinate_io_run = models.CharField(max_length=20,null=True)
+    subordinate_sql_run = models.CharField(max_length=20,null=True)
     delay = models.CharField(max_length=20,null=True)
     current_binlog_file = models.CharField(max_length=30,null=True)
     current_binlog_pos = models.CharField(max_length=30,null=True)
-    master_binlog_file = models.CharField(max_length=30,null=True)
-    master_binlog_pos = models.CharField(max_length=30,null=True)
-    master_binlog_space = models.BigIntegerField(default=0)
-    slave_sql_running_state = models.CharField(max_length=100,null=True)
+    main_binlog_file = models.CharField(max_length=30,null=True)
+    main_binlog_pos = models.CharField(max_length=30,null=True)
+    main_binlog_space = models.BigIntegerField(default=0)
+    subordinate_sql_running_state = models.CharField(max_length=100,null=True)
     create_time = models.DateTimeField(db_index=True)
     class Meta:
         db_table = 'mysql_replication_his'
@@ -266,7 +266,7 @@ class MysqlStatusHis(models.Model):
         index_together = [["db_ip", "db_port", "create_time"], ]
 
 
-# active sql,long sql,slave delay,slave stop,connections
+# active sql,long sql,subordinate delay,subordinate stop,connections
 class Alarm(models.Model):
     db_ip = models.CharField(max_length=30)
     db_port = models.CharField(max_length=10)

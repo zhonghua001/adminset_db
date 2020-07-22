@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
                 ('connection_threshold', models.IntegerField(default=1000)),
                 ('check_delay', models.SmallIntegerField(default=0)),
                 ('delay_threshold', models.IntegerField(default=3600)),
-                ('check_slave', models.SmallIntegerField(default=0)),
+                ('check_subordinate', models.SmallIntegerField(default=0)),
                 ('replchannel', models.CharField(default='0', max_length=30)),
                 ('alarm_times', models.SmallIntegerField(default=3)),
                 ('alarm_interval', models.SmallIntegerField(default=60)),

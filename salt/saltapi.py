@@ -68,9 +68,9 @@ class SaltAPI(object):
         content = json.loads(opener.read())
         return content
 
-    def asyncMasterToMinion(self, tgt, fun, arg,group=0):
+    def asyncMainToMinion(self, tgt, fun, arg,group=0):
         '''
-        异步执行，当target为部分minion时，Master操作Minion；
+        异步执行，当target为部分minion时，Main操作Minion；
         :param target: 目标服务器ID组成的字符串；
         :param fun: 使用的salt模块，如state.sls, cmd.run
         :param arg: 传入的命令或sls文件
@@ -101,9 +101,9 @@ class SaltAPI(object):
 
 
 
-    def masterToMinionContent(self, tgt, fun, arg):
+    def mainToMinionContent(self, tgt, fun, arg):
         '''
-            Master控制Minion，返回的结果是内容，不是jid；
+            Main控制Minion，返回的结果是内容，不是jid；
             目标参数tgt是一个如下格式的字符串：'*' 或 'zhaogb-201, zhaogb-202, zhaogb-203, ...'
         '''
         if tgt == '*':
@@ -275,7 +275,7 @@ def main():
     # params = {'client':'local', 'fun':'test.ping', 'tgt':'某组服务器的组名', 'expr_form':'nodegroup'}
     #test = sapi.saltCmd(params)
     print "hellp"
-    print sapi.asyncMasterToMinion('*','test.ping','none_arg')
+    print sapi.asyncMainToMinion('*','test.ping','none_arg')
     x= sapi.list_all_key()
     print x
     sapi1 = SaltAPI()
