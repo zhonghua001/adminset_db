@@ -4,16 +4,16 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 # Register your models here.
-from .models import sqlreview_role, master_config, workflow
+from .models import sqlreview_role, main_config, workflow
 
 admin.site.register(sqlreview_role)
-admin.site.register(master_config)
+admin.site.register(main_config)
 admin.site.register(workflow)
 
 #
-# class master_configAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'cluster_name', 'master_host', 'master_port', 'master_user', 'master_password', 'create_time', 'update_time')
-#     search_fields = ['id', 'cluster_name', 'master_host', 'master_port', 'master_user', 'master_password', 'create_time', 'update_time']
+# class main_configAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'cluster_name', 'main_host', 'main_port', 'main_user', 'main_password', 'create_time', 'update_time')
+#     search_fields = ['id', 'cluster_name', 'main_host', 'main_port', 'main_user', 'main_password', 'create_time', 'update_time']
 #
 # class workflowAdmin(admin.ModelAdmin):
 #     list_display = ('id','workflow_name', 'engineer', 'review_man', 'create_time', 'finish_time', 'status', 'is_backup', 'review_content', 'cluster_name', 'reviewok_time', 'sql_content', 'execute_result')
@@ -63,5 +63,5 @@ admin.site.register(workflow)
 
 #
 # admin.site.register(sqlreview_role, usersAdmin)
-# admin.site.register(master_config, master_configAdmin)
+# admin.site.register(main_config, main_configAdmin)
 # admin.site.register(workflow, workflowAdmin)

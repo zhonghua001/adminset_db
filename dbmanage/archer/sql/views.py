@@ -19,7 +19,7 @@ from .dao import Dao
 from .const import Const
 from .sendmail import MailSender
 from .inception import InceptionDao
-from .models import sqlreview_role, master_config, workflow
+from .models import sqlreview_role, main_config, workflow
 from django.template.loader import get_template
 from django.template import Context
 dao = Dao()
@@ -132,35 +132,35 @@ def allworkflow(request):
 #提交SQL的页面
 def submitSql(request):
     temp_name = 'archer/archer-header.html'
-    # masters = master_config.objects.all().order_by('cluster_name')
+    # mains = main_config.objects.all().order_by('cluster_name')
 
-    masters = func.get_mysql_hostlist(request.user.username,'incept')
+    mains = func.get_mysql_hostlist(request.user.username,'incept')
 
 
-    if len(masters) == 0:
+    if len(mains) == 0:
        context = {'errMsg': '集群数为0，可能后端数据没有配置集群','temp_name':temp_name}
        return render(request, 'archer/error.html', context)
     
     #获取所有集群名称
-    # listAllClusterName = masters
+    # listAllClusterName = mains
     pydecryp = prpcrypt()
     dictAllClusterDb = OrderedDict()
     #每一个都首先获取主库地址在哪里
-    for master in masters:
-    #     listMasters = master_config.objects.filter(cluster_name=clusterName)
-    #     if len(listMasters) != 1:
+    for main in mains:
+    #     listMains = main_config.objects.filter(cluster_name=clusterName)
+    #     if len(listMains) != 1:
     #         context = {'errMsg': '存在两个集群名称一样的集群，请修改数据库'}
     #         return render(request, 'error.html', context)
         #取出该集群的名称以及连接方式，为了后面连进去获取所有databases
-        master_up = Db_name.objects.get(dbtag=master).db_account_set.get(role='admin')
-        master_ip = Db_name.objects.get(dbtag=master).instance.get()
-        masterHost = master_ip.ip
-        masterPort = master_ip.port
-        masterUser = master_up.user
-        masterPassword = prpCryptor.decrypt(master_up.passwd)
+        main_up = Db_name.objects.get(dbtag=main).db_account_set.get(role='admin')
+        main_ip = Db_name.objects.get(dbtag=main).instance.get()
+        mainHost = main_ip.ip
+        mainPort = main_ip.port
+        mainUser = main_up.user
+        mainPassword = prpCryptor.decrypt(main_up.passwd)
 
-        listDb = dao.getAlldbByCluster(masterHost, masterPort, masterUser, masterPassword)
-        dictAllClusterDb[master] = listDb
+        listDb = dao.getAlldbByCluster(mainHost, mainPort, mainUser, mainPassword)
+        dictAllClusterDb[main] = listDb
 
     #获取所有审核人，当前登2录用户不可以审核
     loginUser = request.user.username
@@ -312,7 +312,7 @@ def execute(request):
         context = {'errMsg': '当前工单状态不是等待人工审核中，请刷新当前页面！','temp_name':temp_name}
         return render(request, 'archer/error.html', context)
 
-    dictConn = getMasterConnStr(clusterName)
+    dictConn = getMainConnStr(clusterName)
 
     #将流程状态修改为执行中，并更新reviewok_time字段
     workflowDetail.status = Const.workflowStatus['executing']
@@ -465,15 +465,15 @@ def charts(request):
 # @login_required(login_url='/accounts/login/')
 # # @permission_required('myapp.can_see_taskview', login_url='/')
 # @permission_verify()
-def getMasterConnStr(clusterName):
-    master_up = Db_name.objects.get(dbtag=clusterName).db_account_set.get(role='admin')
-    master_ip = Db_name.objects.get(dbtag=clusterName).instance.get()
-    masterHost = master_ip.ip
-    masterPort = master_ip.port
-    masterUser = master_up.user
-    masterPassword = prpCryptor.decrypt(master_up.passwd)
+def getMainConnStr(clusterName):
+    main_up = Db_name.objects.get(dbtag=clusterName).db_account_set.get(role='admin')
+    main_ip = Db_name.objects.get(dbtag=clusterName).instance.get()
+    mainHost = main_ip.ip
+    mainPort = main_ip.port
+    mainUser = main_up.user
+    mainPassword = prpCryptor.decrypt(main_up.passwd)
 
-    dictConn = {'masterHost':masterHost, 'masterPort':masterPort, 'masterUser':masterUser, 'masterPassword':masterPassword}
+    dictConn = {'mainHost':mainHost, 'mainPort':mainPort, 'mainUser':mainUser, 'mainPassword':mainPassword}
     return dictConn
 
 #获取当前时间

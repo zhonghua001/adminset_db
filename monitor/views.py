@@ -56,12 +56,12 @@ def mon_edit(request):
                 edit_db.longsql_time = int(request.POST['longthre_set'])
                 edit_db.check_active = int(request.POST['activesql_set'])
                 edit_db.active_threshold = int(request.POST['activetre_set'])
-                edit_db.replchannel = request.POST['slavechannel_set']
+                edit_db.replchannel = request.POST['subordinatechannel_set']
                 edit_db.check_connections = int(request.POST['connection_set'])
                 edit_db.connection_threshold = int(request.POST['connectiontre_set'])
-                edit_db.check_slave =  int(request.POST['slave_set'])
-                edit_db.check_delay = int(request.POST['slavedelay_set'])
-                edit_db.delay_threshold = int(request.POST['slavedelaytre_set'])
+                edit_db.check_subordinate =  int(request.POST['subordinate_set'])
+                edit_db.check_delay = int(request.POST['subordinatedelay_set'])
+                edit_db.delay_threshold = int(request.POST['subordinatedelaytre_set'])
                 edit_db.alarm_times = int(request.POST['alarmtime_set'])
                 edit_db.alarm_interval = int(request.POST['alarminterval_set'])
 
@@ -79,10 +79,10 @@ def mon_edit(request):
                                             check_longsql=int(request.POST['longsql_set']),longsql_autokill=int(request.POST['autokill_set']),\
                                             longsql_time=int(request.POST['longthre_set']),check_active=int(request.POST['activesql_set']),\
                                             active_threshold=int(request.POST['activetre_set']),check_connections=int(request.POST['connection_set']), \
-                                            connection_threshold=int(request.POST['connectiontre_set']),check_slave=int(request.POST['slave_set']), \
-                                            check_delay=int(request.POST['slavedelay_set']),delay_threshold=int(request.POST['slavedelaytre_set']), \
+                                            connection_threshold=int(request.POST['connectiontre_set']),check_subordinate=int(request.POST['subordinate_set']), \
+                                            check_delay=int(request.POST['subordinatedelay_set']),delay_threshold=int(request.POST['subordinatedelaytre_set']), \
                                             alarm_times=int(request.POST['alarmtime_set']),alarm_interval=int(request.POST['alarminterval_set']), \
-                                            replchannel=request.POST['slavechannel_set'],mail_to=request.POST['mailset'])
+                                            replchannel=request.POST['subordinatechannel_set'],mail_to=request.POST['mailset'])
                     edit_db.save()
         except Exception,e:
             print e

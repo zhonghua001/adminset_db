@@ -1055,8 +1055,8 @@ def mysql_admin(request):
                 sql = "show global variables like '%" + vir + "%'"
                 datalist, col = meta.process(insname, 7,sql)
                 return render(request, 'admin/mysql_admin.html', locals())
-            elif request.POST.has_key('slavestatus'):
-                sql = "show slave status"
+            elif request.POST.has_key('subordinatestatus'):
+                sql = "show subordinate status"
                 datalist, col = meta.process(insname, 7,sql)
                 return render(request, 'admin/mysql_admin.html', locals())
             elif request.POST.has_key('search'):

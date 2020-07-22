@@ -8,13 +8,13 @@ class Dao(object):
     _CHART_DAYS = 90
 
     #连进指定的mysql实例里，读取所有databases并返回
-    def getAlldbByCluster(self, masterHost, masterPort, masterUser, masterPassword):
+    def getAlldbByCluster(self, mainHost, mainPort, mainUser, mainPassword):
         listDb = []
         conn = None
         cursor = None
         
         try:
-            conn=MySQLdb.connect(host=masterHost, port=int(masterPort), user=masterUser, passwd=masterPassword, charset='utf8mb4')
+            conn=MySQLdb.connect(host=mainHost, port=int(mainPort), user=mainUser, passwd=mainPassword, charset='utf8mb4')
             cursor = conn.cursor()
             sql = "show databases"
             n = cursor.execute(sql)
