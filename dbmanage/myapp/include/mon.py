@@ -49,13 +49,13 @@ class Connect(object):
              results = 'error'
         return results
 
-# active sql,long sql,slave stop,slave delay,connections
+# active sql,long sql,subordinate stop,subordinate delay,connections
 alarm_list = {
     1:'active sql',
     2:'long sql',
     3:'long sql killed',
-    4:'slave stop',
-    5:'slave delay',
+    4:'subordinate stop',
+    5:'subordinate delay',
     6:'connections',
     7:'server down'
 }
@@ -387,12 +387,12 @@ def mon_basic(db):
             open_tables_usage_rate = 0
 
         # repl
-        slave_status = cur.execute('show slave status;')
-        if slave_status <> 0:
-            role = 'slave'
+        subordinate_status = cur.execute('show subordinate status;')
+        if subordinate_status <> 0:
+            role = 'subordinate'
             role_new = 's'
         else:
-            role = 'master'
+            role = 'main'
             role_new = 'm'
         ############################# INSERT INTO SERVER ##################################################
         sql = "replace into mysql_status(db_ip,db_port,connect,role,uptime,version,max_connections,max_connect_errors,open_files_limit,table_open_cache,max_tmp_tables,max_heap_table_size,max_allowed_packet,open_files,open_tables,threads_connected,threads_running,threads_created,threads_cached,connections,aborted_clients,aborted_connects,connections_persecond,bytes_received_persecond,bytes_sent_persecond,com_select_persecond,com_insert_persecond,com_update_persecond,com_delete_persecond,com_commit_persecond,com_rollback_persecond,questions_persecond,queries_persecond,transaction_persecond,created_tmp_tables_persecond,created_tmp_disk_tables_persecond,created_tmp_files_persecond,table_locks_immediate_persecond,table_locks_waited_persecond,key_buffer_size,sort_buffer_size,join_buffer_size,key_blocks_not_flushed,key_blocks_unused,key_blocks_used,key_read_requests_persecond,key_reads_persecond,key_write_requests_persecond,key_writes_persecond,innodb_version,innodb_buffer_pool_instances,innodb_buffer_pool_size,innodb_doublewrite,innodb_file_per_table,innodb_flush_log_at_trx_commit,innodb_flush_method,innodb_force_recovery,innodb_io_capacity,innodb_read_io_threads,innodb_write_io_threads,innodb_buffer_pool_pages_total,innodb_buffer_pool_pages_data,innodb_buffer_pool_pages_dirty,innodb_buffer_pool_pages_flushed,innodb_buffer_pool_pages_free,innodb_buffer_pool_pages_misc,innodb_page_size,innodb_pages_created,innodb_pages_read,innodb_pages_written,innodb_row_lock_current_waits,innodb_buffer_pool_pages_flushed_persecond,innodb_buffer_pool_read_requests_persecond,innodb_buffer_pool_reads_persecond,innodb_buffer_pool_write_requests_persecond,innodb_rows_read_persecond,innodb_rows_inserted_persecond,innodb_rows_updated_persecond,innodb_rows_deleted_persecond,query_cache_hitrate,thread_cache_hitrate,key_buffer_read_rate,key_buffer_write_rate,key_blocks_used_rate,created_tmp_disk_tables_rate,connections_usage_rate,open_files_usage_rate,open_tables_usage_rate,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
@@ -441,25 +441,25 @@ def mon_basic(db):
                 mysql_exec(sql, param)
 
         #check replication
-        master_thread=cur.execute("select * from information_schema.processlist where COMMAND = 'Binlog Dump' or COMMAND = 'Binlog Dump GTID';")
-        slave_status=cur.execute('show slave status;')
+        main_thread=cur.execute("select * from information_schema.processlist where COMMAND = 'Binlog Dump' or COMMAND = 'Binlog Dump GTID';")
+        subordinate_status=cur.execute('show subordinate status;')
         datalist=[]
-        if master_thread >= 1:
+        if main_thread >= 1:
             datalist.append(int(1))
-            if slave_status <> 0:
+            if subordinate_status <> 0:
                 datalist.append(int(1))
             else:
                 datalist.append(int(0))
         else:
             datalist.append(int(0))
-            if slave_status <> 0:
+            if subordinate_status <> 0:
                 datalist.append(int(1))
             else:
                 datalist.append(int(0))
                 sql="delete from mysql_replication where db_ip=%s and db_port=%s;"
                 param =(db.instance.ip,db.instance.port)
                 mysql_exec(sql,param)
-        if slave_status <> 0:
+        if subordinate_status <> 0:
             gtid_mode=cur.execute("select * from information_schema.global_variables where variable_name='gtid_mode';")
             result=cur.fetchone()
             if result:
@@ -470,41 +470,41 @@ def mon_basic(db):
             read_only=cur.execute("select * from information_schema.global_variables where variable_name='read_only';")
             result=cur.fetchone()
             datalist.append(result[1])
-            #slave_info=cur.execute('show slave status;')
+            #subordinate_info=cur.execute('show subordinate status;')
             if db.replchannel <> '0':
-                slave_info=cur.execute("show slave status for channel '%s';" %(db.replchannel))
+                subordinate_info=cur.execute("show subordinate status for channel '%s';" %(db.replchannel))
             else :
-                slave_info=cur.execute('show slave status;')
+                subordinate_info=cur.execute('show subordinate status;')
             result=cur.fetchone()
             # print "result"
-            # print slave_info
-            master_server=result[1]
-            master_port=result[3]
-            slave_io_run=result[10]
-            slave_sql_run=result[11]
+            # print subordinate_info
+            main_server=result[1]
+            main_port=result[3]
+            subordinate_io_run=result[10]
+            subordinate_sql_run=result[11]
             delay=result[32]
             current_binlog_file=result[9]
             current_binlog_pos=result[21]
-            master_binlog_file=result[5]
-            master_binlog_pos=result[6]
+            main_binlog_file=result[5]
+            main_binlog_pos=result[6]
             try:
-                slave_sQL_rnning_state=result[44]
+                subordinate_sQL_rnning_state=result[44]
             except Exception,e:
-                slave_sQL_running_state="NULL"
-            datalist.append(master_server)
-            datalist.append(master_port)
-            datalist.append(slave_io_run)
-            datalist.append(slave_sql_run)
+                subordinate_sQL_running_state="NULL"
+            datalist.append(main_server)
+            datalist.append(main_port)
+            datalist.append(subordinate_io_run)
+            datalist.append(subordinate_sql_run)
             datalist.append(delay)
             datalist.append(current_binlog_file)
             datalist.append(current_binlog_pos)
-            datalist.append(master_binlog_file)
-            datalist.append(master_binlog_pos)
+            datalist.append(main_binlog_file)
+            datalist.append(main_binlog_pos)
             datalist.append(0)
-            datalist.append(slave_sQL_rnning_state)
+            datalist.append(subordinate_sQL_rnning_state)
 
-            if db.check_slave:
-                if (slave_io_run == "Yes") and (slave_sql_run == "Yes"):
+            if db.check_subordinate:
+                if (subordinate_io_run == "Yes") and (subordinate_sql_run == "Yes"):
                     alarm_type = 4
                     check_ifok(db, alarm_type)
                     if db.check_delay :
@@ -518,12 +518,12 @@ def mon_basic(db):
                 else:
                     alarm_type = 4
                     if record_alarm(db,alarm_type):
-                        sendmail_monitor.delay(db, db.mail_to.split(';'),{'iothread':slave_io_run,'sqlthread':slave_sql_run}, alarm_type)
+                        sendmail_monitor.delay(db, db.mail_to.split(';'),{'iothread':subordinate_io_run,'sqlthread':subordinate_sql_run}, alarm_type)
 
 
 
 
-        elif master_thread >= 1:
+        elif main_thread >= 1:
             gtid_mode=cur.execute("select * from information_schema.global_variables where variable_name='gtid_mode';")
             result=cur.fetchone()
             if result:
@@ -541,11 +541,11 @@ def mon_basic(db):
             datalist.append('---')
             datalist.append('---')
             datalist.append('---')
-            master=cur.execute('show master status;')
-            master_result=cur.fetchone()
-            datalist.append(master_result[0])
-            datalist.append(master_result[1])
-            binlog_file=cur.execute('show master logs;')
+            main=cur.execute('show main status;')
+            main_result=cur.fetchone()
+            datalist.append(main_result[0])
+            datalist.append(main_result[1])
+            binlog_file=cur.execute('show main logs;')
             binlogs=0
             if binlog_file:
                 for row in cur.fetchall():
@@ -557,8 +557,8 @@ def mon_basic(db):
         result=datalist
         if result:
             datalist.append(now_time)
-            sql= "replace into mysql_replication(db_ip,db_port,is_master,is_slave,gtid_mode,read_only,master_server,master_port,slave_io_run,slave_sql_run,delay,current_binlog_file,current_binlog_pos,master_binlog_file,master_binlog_pos,master_binlog_space,slave_sql_running_state,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            sql2= "insert into mysql_replication_his(db_ip,db_port,is_master,is_slave,gtid_mode,read_only,master_server,master_port,slave_io_run,slave_sql_run,delay,current_binlog_file,current_binlog_pos,master_binlog_file,master_binlog_pos,master_binlog_space,slave_sql_running_state,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql= "replace into mysql_replication(db_ip,db_port,is_main,is_subordinate,gtid_mode,read_only,main_server,main_port,subordinate_io_run,subordinate_sql_run,delay,current_binlog_file,current_binlog_pos,main_binlog_file,main_binlog_pos,main_binlog_space,subordinate_sql_running_state,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql2= "insert into mysql_replication_his(db_ip,db_port,is_main,is_subordinate,gtid_mode,read_only,main_server,main_port,subordinate_io_run,subordinate_sql_run,delay,current_binlog_file,current_binlog_pos,main_binlog_file,main_binlog_pos,main_binlog_space,subordinate_sql_running_state,create_time) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
 
             param=(db.instance.ip,db.instance.port,result[0],result[1],result[2],result[3],result[4],result[5],result[6],result[7],result[8],result[9],result[10],result[11],result[12],result[13],result[14],result[15])
             mysql_exec(sql,param)

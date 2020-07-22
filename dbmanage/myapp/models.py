@@ -179,7 +179,7 @@ class MySQL_monitor(models.Model):
     connection_threshold = models.IntegerField(default=1000)
     check_delay = models.SmallIntegerField(default=0)
     delay_threshold = models.IntegerField(default=3600)
-    check_slave = models.SmallIntegerField(default=0)
+    check_subordinate = models.SmallIntegerField(default=0)
     replchannel = models.CharField(max_length=30,default='0')
     alarm_times = models.SmallIntegerField(default=3)
     alarm_interval = models.SmallIntegerField(default=60)

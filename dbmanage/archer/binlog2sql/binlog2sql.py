@@ -17,7 +17,7 @@ class Binlog2sql(object):
     def __init__(self, connectionSettings, startFile=None, startPos=None, endFile=None, endPos=None, startTime=None,
                  stopTime=None, only_schemas=None, only_tables=None, nopk=False, flashback=False, stopnever=False):
         '''
-        connectionSettings: {'host': 127.0.0.1, 'port': 3306, 'user': slave, 'passwd': slave}
+        connectionSettings: {'host': 127.0.0.1, 'port': 3306, 'user': subordinate, 'passwd': subordinate}
         '''
         if not startFile:
             raise ValueError('lack of parameter,startFile.')

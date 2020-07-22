@@ -6,7 +6,7 @@ leftMenuBtnsCommon = (
                    {'key':'submitsql',          'name':'发起SQL上线',       'url':'/dbmanage/archer/submitsql/',               'class':'glyphicon glyphicon-asterisk'},
                )
 leftMenuBtnsSuper = (
-                   {'key':'masterconfig',       'name':'主库地址配置',      'url':'/dbmanage/archer/admin/sql/master_config/',      'class':'glyphicon glyphicon-user'},
+                   {'key':'mainconfig',       'name':'主库地址配置',      'url':'/dbmanage/archer/admin/sql/main_config/',      'class':'glyphicon glyphicon-user'},
                    {'key':'userconfig',         'name':'用户权限配置',       'url':'/dbmanage/archer/admin/sql/users/',        'class':'glyphicon glyphicon-th-large'},
                    {'key':'workflowconfig',     'name':'所有工单管理',       'url':'/dbmanage/archer/admin/sql/workflow/',        'class':'glyphicon glyphicon-list-alt'},
 )
